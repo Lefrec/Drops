@@ -1,25 +1,46 @@
 ## Project context
 
 This project is part of an advanced frontend developpement course.
+
 The goal is to create the frontend of an application based on an existing API.
+
 The app's purpose is to create and share "Drops", they are geographical points with text, pictures or riddles attached.
-It is a short scoped project in the span of 6 days.
+
+It is a short scoped project in the span of 6 days centered around the MMI Department (where the course takes place).
+
+## Features
+
+- Basic UI in french
+- Authentification
+- Profile customization
+- Creating, updating and deleting drops
+- Listing drops, filtering by category
+- Liking and commenting drops
+- Reporting drops or comments
 
 ## Tech Stack
 
-Framework : Next
-Code Hosting : GitHub
-Deployement : Vercel
-API : Custom Nodejs API detailed below
+- Framework : Next
+- Code Hosting : GitHub
+- Deployement : Vercel
+- API : Custom Nodejs API detailed below
 
-## API Contract
+## Custom API details
 
-JSON, camelCase, dates ISO 8601 UTC, ids entiers. Auth : `Authorization: Bearer <token>` (aucun cookie).
-Un token présent mais invalide, expiré ou révoqué donne 401 sur toutes les routes, même publiques.
-Corps stricts : champ inconnu = 422, pas de conversion de type (`"47.4"` n'est pas un nombre).
-Doc interactive : /docs. Spécification : /openapi.json.
+The API is accessed at `drops-api-production.up.railway.app`.
 
-### Types
+Documentation for it is readable at `drops-api-production.up.railway.app/docs`.
+
+OpenAPI specification is at `drops-api-production.up.railway.app/openapi.json`.
+
+### API Contract
+
+JSON, camelCase, dates ISO 8601 UTC, ids full. Auth : `Authorization: Bearer <token>` (no cookie).
+Token exists but is invalid, expired or revoked get 401 on all routes, even public ones.
+Strict body : unknown field = 422, no type conversion (`"47.4"` is not a number).
+Interactive doc : /docs. Specification : /openapi.json.
+
+#### Types
 
 ```ts
 type Category = "note" | "photo" | "tip" | "riddle";
@@ -95,12 +116,12 @@ interface ApiError {
 }
 ```
 
-`likedByMe`, `openedByMe`, `isMine` valent `false` sans token. `hidden` n'est `true` que pour l'auteur.
-Pagination : `?page=1` (≥1), `?pageSize=20` (1 à 50). Page au-delà de la fin : 200 avec `items: []`.
+`likedByMe`, `openedByMe`, `isMine` are `false` without token. `hidden` is only `true` for the author.
+Pagination : `?page=1` (≥1), `?pageSize=20` (1 to 50). Page after end : 200 with `items: []`.
 
-### Routes
+#### Routes
 
-Accès : public, token? (token facultatif), token, admin (`X-Admin-Key`). Format : succès | erreurs possibles.
+Access : public, token? (optional token), token, admin (`X-Admin-Key`). Format : success | possible errors.
 
 ```
 GET    /                            public      200 | 429,500
@@ -131,32 +152,25 @@ GET    /admin/reports               admin       200 | 403,500
 POST   /admin/drops/{id}/unhide     admin       200 | 403,404,500
 ```
 
-### Erreurs
+#### Errors
 
-Format unique, `fields` toujours présent (clé = champ du corps ou paramètre, valeur = messages) :
+Unique format, `fields` always present (key = field's body or parameter, value = messages) :
 `{ "error": { "status": 422, "code": "validation_failed", "message": "…", "fields": { "title": ["…"] }, "requestId": "req_…", "simulated": false } }`
 
 400 bad_request · 401 unauthorized, invalid_token, token_expired, token_revoked, invalid_credentials · 403 forbidden
 404 not_found · 409 conflict · 422 validation_failed · 429 rate_limited (Retry-After) · 500 internal_error · 503 service_unavailable
-Erreurs de coordonnées (type, bornes, zone de 3 km autour du département MMI) : toujours sous la clé `location`.
+Coordinate errors (type, boundaries, 3 km zone around the MMI department): always under the `location` key.
 
-### Outils pédagogiques
+#### Educational tools
 
-- `?delay=<ms>` (0 à 10000) sur toute route.
-- `?fail=<statut>` (400, 401, 403, 404, 409, 422, 429, 500, 503) : requête non exécutée, erreur avec `simulated: true` et `X-Simulated: true`.
-  `fail=422` met « Erreur simulée sur ce champ. » sous chaque champ du corps. `fail=429` ajoute `Retry-After: 5`.
-- `POST /auth/login?ttl=<secondes>` (10 à 28800) : token de courte durée.
-- Comptes de démo : `demo` / `drops2026` (autres prénoms : même mot de passe).
-
-<!-- BEGIN:nextjs-agent-rules -->
-
-## API Documentation link
-
-You can consult the API extensive documentation at [this url](drops-api-production.up.railway.app/docs).
+- `?delay=<ms>` (0 to 10000) on all routes.
+- `?fail=<statut>` (400, 401, 403, 404, 409, 422, 429, 500, 503) : request not executed, error with `simulated: true` and `X-Simulated: true`.
+  `fail=422` put « Erreur simulée sur ce champ. » under every field's body. `fail=429` add `Retry-After: 5`.
+- `POST /auth/login?ttl=<secondes>` (10 to 28800) : short duration token.
+- Demo account : `demo` / `drops2026` (other names : same password).
 
 ## This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
