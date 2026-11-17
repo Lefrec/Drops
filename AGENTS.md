@@ -169,6 +169,12 @@ Coordinate errors (type, boundaries, 3 km zone around the MMI department): alway
 - `POST /auth/login?ttl=<secondes>` (10 to 28800) : short duration token.
 - Demo account : `demo` / `drops2026` (other names : same password).
 
+## Commands
+
+- `npm run dev` runs a local dev build of the project
+- `npm run build` builds the project for prodution
+- `npm run typegen` generate the API types
+
 ## This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
