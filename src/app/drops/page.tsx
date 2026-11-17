@@ -9,10 +9,9 @@ export default function DropPage({searchParams}: {searchParams: Promise<SearchPa
     <main className="flex flex-col">
       <Suspense fallback={null}>
         <SearchBox/>
-        ErrorBoundary
-        <div className="flex">
+        <nav className="category-filters" aria-label="Filtrer par catégorie">
           <Categories searchParams={searchParams}/>
-        </div>
+        </nav>
       </Suspense>
       <Suspense fallback={<p>Chargement des drops...</p>}>
         <DropList searchParams={searchParams}/>

@@ -6,9 +6,9 @@ export default function ErrorPage({error, retry}: {error: unknown, retry: () => 
         console.error(error)
     }, [error])
     return (
-        <div>
-        <h2>Failed to login</h2>
-        <button onClick={() => retry()}>Try again</button>
-    </div>
+        <main>
+            <h1>Failed to login</h1>
+            <button onClick={() => retry()}>Try again</button>
+        </main>
   )
 }

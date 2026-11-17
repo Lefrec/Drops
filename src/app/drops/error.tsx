@@ -6,9 +6,9 @@ export default function ErrorPage({error, retry}: {error: unknown, retry: () => 
         console.error(error)
     }, [error])
     return (
-        <div>
-        <h2>Something went wrong while loading Drop page</h2>
-        <button onClick={() => retry()}>Try again</button>
-    </div>
+        <main>
+            <h1>Something went wrong while loading Drop page</h1>
+            <button onClick={() => retry()}>Try again</button>
+        </main>
   )
 }

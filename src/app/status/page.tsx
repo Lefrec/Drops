@@ -2,10 +2,12 @@ import { Suspense } from "react";
 
 export default function StatusPage() {
     return (
-        <Suspense fallback={<p>Vérification ...</p>}>
-            <Health />
-        </Suspense>
-        
+        <main>
+            <h1>Statut de l'API</h1>
+            <Suspense fallback={<p>Vérification ...</p>}>
+                <Health />
+            </Suspense>
+        </main>
     )
 }
 
