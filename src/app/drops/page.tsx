@@ -1,19 +1,22 @@
-import { SearchBox } from "@/components/drops/searchbox"
-import { Categories } from "@/components/drops/categories"
+import { SearchBox } from "@/app/drops/searchbox"
+import { Categories } from "@/app/drops/categories"
 import { Suspense } from "react"
 import { SearchParams } from "next/dist/server/request/search-params"
+import { DropList } from "./drop_list"
 
-export default function DropList({searchParams}: {searchParams: Promise<SearchParams>}) {
+export default function DropPage({searchParams}: {searchParams: Promise<SearchParams>}) {
   return (
-    <div className="flex flex-col">
+    <main className="flex flex-col">
       <Suspense fallback={null}>
         <SearchBox/>
-      </Suspense>
-      <Suspense fallback={null}>
         <div className="flex">
-            <Categories searchParams={searchParams}/>
+          <Categories searchParams={searchParams}/>
         </div>
       </Suspense>
-    </div>
+      <Suspense fallback={<p>Chargement des drops...</p>}>
+        <DropList searchParams={searchParams}/>
+      </Suspense>
+    </main>
   )
 }
+
