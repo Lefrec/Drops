@@ -6,11 +6,11 @@ export function SearchBox() {
     const router = useRouter()
     const params = useSearchParams()
 
-    const onSearch = useDebouncedCallback((search: string) => {
+    const onSearch = useDebouncedCallback((q: string) => {
         const nextURL = new URLSearchParams(params)
-        if (search) nextURL.set('search', search); else nextURL.delete('search')
+        if (q) nextURL.set('q', q); else nextURL.delete('q')
         router.replace(`?${nextURL}`)
     }, 300) // <- debounce timer
 
-    return <input defaultValue={params.get('search') ?? ''} onChange={(e) => onSearch(e.target.value)} />
+    return <input defaultValue={params.get('q') ?? ''} onChange={(e) => onSearch(e.target.value)} />
 }

@@ -1,6 +1,10 @@
+'use client'
 import type { Drop } from "@/lib/api/types"
+import { useEffect, useState } from "react"
 
 export function DropCard({ drop }: { drop: Drop }) {
+  const [expanded, setExpanded] = useState(false)
+
   return (
     <article>
       <header>

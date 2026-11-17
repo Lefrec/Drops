@@ -14,5 +14,5 @@ export async function login(prev: {error?: string}, data: FormData) {
     if (!res.ok) return { error: 'Identifiants incorrects'}
     const { token } = (await res.json()) as AuthResponse
     await setSession(token)
-    redirect('/')
+    redirect('/drops')
 }

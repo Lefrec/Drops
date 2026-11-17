@@ -7,12 +7,15 @@ export async function DropList({searchParams}: {searchParams: Promise<SearchPara
   const params = await searchParams
   const apiParams = new URLSearchParams()
 
-  if (typeof params.search === "string" && params.search.trim()) {
-    apiParams.set("q", params.search.trim())
+  if (typeof params.q === "string" && params.q.trim()) {
+    apiParams.set("q", params.q.trim())
   }
-  if (typeof params.cat === "string") {
-    apiParams.set("category", params.cat)
+  if (typeof params.category === "string") {
+    apiParams.set("category", params.category)
   }
+
+  console.log(params)
+  console.log(apiParams)
 
   const query = apiParams.toString()
   const drops = await apiGet<DropPage>(`/drops${query ? `?${query}` : ""}`)

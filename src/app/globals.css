@@ -71,6 +71,12 @@ a {
   border: 1px solid var(--border);
 }
 
+.category-filters a[aria-current="page"] {
+  border-color: var(--foreground);
+  background: var(--foreground);
+  color: var(--background);
+}
+
 main ul {
   display: grid;
   gap: 1rem;

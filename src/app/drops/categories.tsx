@@ -5,14 +5,26 @@ import Link from "next/link"
 
 export async function Categories({searchParams}: {searchParams: Promise<SearchParams>}) {
     const params = await searchParams
-    const {cat, ...otherParams} = params
+    const {category, ...otherParams} = params
+    const selectedCategory = typeof category === "string" ? category : undefined
     const list = await apiGet<Category[]>('/categories')
 
     return (
         <>
-            <Link href={{pathname: '/drops', query: otherParams}}>Toutes</Link>
+            <Link
+                href={{pathname: '/drops', query: otherParams}}
+                aria-current={selectedCategory ? undefined : "page"}
+            >
+                Toutes
+            </Link>
             {list.map((c) => (
-                <Link key={c.id} href={{pathname: '/drops', query: {...otherParams, cat: c.id}}}>{c.label}</Link>
+                <Link
+                    key={c.id}
+                    href={{pathname: '/drops', query: {...otherParams, category: c.id}}}
+                    aria-current={selectedCategory === c.id ? "page" : undefined}
+                >
+                    {c.label}
+                </Link>
             ))}
         </>
     )

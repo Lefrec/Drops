@@ -7,6 +7,7 @@ import { DropList } from "./drop_list"
 export default function DropPage({searchParams}: {searchParams: Promise<SearchParams>}) {
   return (
     <main className="flex flex-col">
+      <h1>Drops</h1>
       <Suspense fallback={null}>
         <SearchBox/>
         <nav className="category-filters" aria-label="Filtrer par catégorie">
