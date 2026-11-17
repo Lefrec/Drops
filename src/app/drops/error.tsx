@@ -1,7 +1,7 @@
 'use client' // Error boundaries must be Client Components
 import { useEffect } from 'react'
 
-export default function ErrorHandler({error, retry}: {error: unknown, retry: () => void}) {
+export default function ErrorPage({error, retry}: {error: unknown, retry: () => void}) {
     useEffect(() => {
         console.error(error)
     }, [error])

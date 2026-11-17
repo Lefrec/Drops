@@ -10,3 +10,14 @@ export async function apiGet<T>(path: string, token?: string) {
     if (!res.ok) throw new Error(`API ${res.status} sur ${path}`)
     return (await res.json()) as T
 }
+
+export async function apiPost(path: string, data: Object) {
+    const res = await fetch(`${process.env.API_URL}${path}`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {"Content-Type": "application/json"}
+    })
+    if (res.status === 404) notFound()
+    if (!res.ok) throw new Error(`API ${res.status} sur ${path}`)
+    return res
+}

@@ -9,6 +9,7 @@ export default function DropPage({searchParams}: {searchParams: Promise<SearchPa
     <main className="flex flex-col">
       <Suspense fallback={null}>
         <SearchBox/>
+        ErrorBoundary
         <div className="flex">
           <Categories searchParams={searchParams}/>
         </div>
