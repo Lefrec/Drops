@@ -15,8 +15,8 @@ export async function setSession(token?: string) {
     }
 }
 
-// export async function requireSession() {
-//     const token = (await cookies()).get('session')?.value
-//     if (!token) redirect('/login')
-//     return token
-// }
+export async function requireSession() {
+    const token = (await cookies()).get('session')?.value
+    if (!token) redirect('/login')
+    return token
+}

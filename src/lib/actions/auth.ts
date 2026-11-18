@@ -8,7 +8,7 @@ import { apiPost } from "../api/client"
 export type LoginState = { error?: string }
 
 export async function login(prev: {error?: string}, data: FormData) {
-    const res = await apiPost('/auth/login', {"Content-Type": "application/json"}, {
+    const res = await apiPost('/auth/login', undefined, {
         login: data.get('login'),
         password: data.get('password'),
     })

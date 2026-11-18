@@ -2,6 +2,7 @@ import { apiGet } from "@/lib/api/client"
 import { DropPage } from "@/lib/api/types"
 import { SearchParams } from "next/dist/server/request/search-params"
 import { DropCard } from "./drop_card"
+import { requireSession } from "@/lib/session"
 
 export async function DropList({searchParams}: {searchParams: Promise<SearchParams>}) {
   const params = await searchParams
@@ -18,7 +19,7 @@ export async function DropList({searchParams}: {searchParams: Promise<SearchPara
   console.log(apiParams)
 
   const query = apiParams.toString()
-  const drops = await apiGet<DropPage>(`/drops${query ? `?${query}` : ""}`)
+  const drops = await apiGet<DropPage>(`/drops${query ? `?${query}` : ""}`, await requireSession())
 
   if (drops.items.length === 0) {
     return <p>Aucun drop trouvé.</p>
