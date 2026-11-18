@@ -1,4 +1,5 @@
 import { Suspense } from "react"
+import Link from "next/link"
 import { apiGet } from "@/lib/api/client"
 import type { CommentPage, Drop } from "@/lib/api/types"
 import { requireSession } from "@/lib/session"
@@ -32,6 +33,9 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
         <p>
           Par {drop.isMine ? "moi" : drop.author.displayName} (@{drop.author.username})
         </p>
+        {drop.isMine && (
+          <Link href={`/drops/${drop.id}/edit`}>Modifier mon drop</Link>
+        )}
         {drop.author.avatarUrl && (
           <img
             src={drop.author.avatarUrl}
@@ -41,6 +45,14 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
           />
         )}
       </header>
+
+      {drop.imageUrl && (
+        <img
+          src={drop.imageUrl}
+          alt={`Image du drop ${drop.title}`}
+          className="w-full max-h-128 object-contain"
+        />
+      )}
 
       <p>{drop.content ?? "Aucun texte pour ce drop."}</p>
 

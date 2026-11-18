@@ -1,9 +1,10 @@
 'use server'
 
-import { apiDelete, apiPost } from "@/lib/api/client"
+import { apiDelete, apiPatch, apiPost } from "@/lib/api/client"
 import { requireSession } from "@/lib/session"
 import { refresh } from "next/cache"
 import { ApiError } from "next/dist/server/api-utils"
+import { redirect } from "next/navigation"
 
 export async function toggleLike(dropId: number, liked: boolean) {
     await requireSession()
@@ -35,4 +36,42 @@ export async function addComment(dropId: number, formData: FormData): Promise<{ 
 
     refresh()
     return {}
+}
+
+export async function updateDrop(dropId: number, formData: FormData): Promise<{ error?: string }> {
+    const title = formData.get("title")
+    const content = formData.get("content")
+    const category = formData.get("category")
+    const imageUrl = formData.get("imageUrl")
+
+    if (typeof title !== "string" || !title.trim()) {
+        return { error: "Le titre est obligatoire." }
+    }
+    if (typeof content !== "string") {
+        return { error: "Le texte est invalide." }
+    }
+    if (typeof category !== "string") {
+        return { error: "La catégorie sélectionnée est invalide." }
+    }
+    if (typeof imageUrl !== "string") {
+        return { error: "L’URL de l’image est invalide." }
+    }
+    if (category === "photo" && !imageUrl.trim()) {
+        return { error: "Une URL d’image est obligatoire pour la catégorie photo." }
+    }
+
+    try {
+        await apiPatch(`/drops/${dropId}`, await requireSession(), {
+            title: title.trim(),
+            content: content.trim(),
+            category,
+            imageUrl: imageUrl.trim() || null,
+        })
+    } catch (error) {
+        if (error instanceof Error) return { error: error.message }
+        throw error
+    }
+
+    refresh()
+    redirect(`/drops/${dropId}`)
 }
