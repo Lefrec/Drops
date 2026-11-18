@@ -3,6 +3,7 @@
 import { useActionState } from "react"
 import type { Category } from "@/lib/api/types"
 import { createDrop } from "../actions"
+import { LocationField } from "./location_field"
 
 type FormState = { error?: string }
 
@@ -36,14 +37,7 @@ export function DropCreateForm({ categories }: { categories: Category[] }) {
         URL de l’image
         <input name="imageUrl" type="url" placeholder="https://..." />
       </label>
-      <label>
-        Latitude
-        <input name="lat" type="number" step="any" defaultValue={47.49561} required />
-      </label>
-      <label>
-        Longitude
-        <input name="lng" type="number" step="any" defaultValue={6.80544} required />
-      </label>
+      <LocationField />
       {state.error && <p role="alert">{state.error}</p>}
       <button type="submit" disabled={pending}>
         {pending ? "Création..." : "Créer le drop"}

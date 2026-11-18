@@ -19,9 +19,8 @@ export async function apiPost(path: string, token?: string, data?: Object) {
         body: JSON.stringify(data),
         headers: fullHeaders,
     })
-    const json = await res.json()
     if (res.status === 404) notFound()
-    // if (!res.ok) throw new Error(`API ${res.status} sur ${path}`)
+    if (!res.ok) throw new Error(`API ${res.status} sur ${path}`)
     return res
 }
 
