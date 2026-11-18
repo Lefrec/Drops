@@ -83,7 +83,6 @@ export async function createDrop(formData: FormData): Promise<{ error?: string }
     const imageUrl = formData.get("imageUrl")
     const lat = formData.get("lat")
     const lng = formData.get("lng")
-    const precision = formData.get("precision")
 
     if (typeof title !== "string" || !title.trim()) {
         return { error: "Le titre est obligatoire." }
@@ -106,26 +105,15 @@ export async function createDrop(formData: FormData): Promise<{ error?: string }
     if (typeof lng !== "string" || !lng.trim() || !Number.isFinite(Number(lng))) {
         return { error: "La longitude est invalide." }
     }
-    if (precision !== "exact" && precision !== "approx") {
-        return { error: "La précision de la position est invalide." }
-    }
-
-    try {
-        await apiPost("/drops", await requireSession(), {
-            title: title.trim(),
-            content: content.trim() || null,
-            category,
-            imageUrl: imageUrl.trim() || null,
-            location: {
-                lat: Number(lat),
-                lng: Number(lng),
-                precision,
-            },
-        })
-    } catch (error) {
-        if (error instanceof Error) return { error: error.message }
-        throw error
-    }
+    
+    const res = await apiPost("/drops", await requireSession(), {
+        title: title.trim(),
+        content: content.trim() || null,
+        category: category,
+        imageUrl: imageUrl.trim() || null,
+        lat: Number(lat),
+        lng: Number(lng)
+    })
 
     refresh()
     redirect("/drops")

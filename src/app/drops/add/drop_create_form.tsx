@@ -38,18 +38,11 @@ export function DropCreateForm({ categories }: { categories: Category[] }) {
       </label>
       <label>
         Latitude
-        <input name="lat" type="number" step="any" required />
+        <input name="lat" type="number" step="any" defaultValue={47.49561} required />
       </label>
       <label>
         Longitude
-        <input name="lng" type="number" step="any" required />
-      </label>
-      <label>
-        Précision de la position
-        <select name="precision" defaultValue="exact" required>
-          <option value="exact">Exacte</option>
-          <option value="approx">Approximative</option>
-        </select>
+        <input name="lng" type="number" step="any" defaultValue={6.80544} required />
       </label>
       {state.error && <p role="alert">{state.error}</p>}
       <button type="submit" disabled={pending}>

@@ -31,22 +31,31 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
       <header>
         <p>Drop #{drop.id} · {drop.category}</p>
         <h1>{drop.title}</h1>
-        <p>
-          Par {drop.isMine ? "moi" : drop.author.displayName} (@{drop.author.username})
-        </p>
-        {drop.isMine && (
-          <div className="flex flex-wrap gap-2">
-            <Link href={`/drops/${drop.id}/edit`}>Modifier mon drop</Link>
-            <DeleteDropButton dropId={drop.id} />
-          </div>
-        )}
-        {drop.author.avatarUrl && (
+        <div className="flex items-center gap-2">
+        {drop.author.avatarUrl ? (
           <img
             src={drop.author.avatarUrl}
             alt={`Avatar de ${drop.author.displayName}`}
             width={64}
             height={64}
           />
+        ) : (
+          <span
+            className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white/10 text-sm"
+            aria-hidden="true"
+          >
+            {drop.author.displayName.slice(0, 1).toUpperCase() || "?"}
+          </span>
+        )}
+        <p>
+          Par {drop.isMine ? "moi" : drop.author.displayName} (@{drop.author.username})
+        </p>
+        </div>
+        {drop.isMine && (
+          <div className="flex flex-wrap gap-2">
+            <Link className="button" href={`/drops/${drop.id}/edit`}>Modifier mon drop</Link>
+            <DeleteDropButton dropId={drop.id} />
+          </div>
         )}
       </header>
 
