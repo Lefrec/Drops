@@ -6,6 +6,7 @@ import { requireSession } from "@/lib/session"
 import { CommentItem } from "../comment_item"
 import { CommentButton } from "../comment_button"
 import { LikeButton } from "../like_button"
+import { DeleteDropButton } from "../delete_drop_button"
 
 export default function DropPage({ params }: { params: Promise<{ id: string }> }) {
   return (
@@ -34,7 +35,10 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
           Par {drop.isMine ? "moi" : drop.author.displayName} (@{drop.author.username})
         </p>
         {drop.isMine && (
-          <Link href={`/drops/${drop.id}/edit`}>Modifier mon drop</Link>
+          <div className="flex flex-wrap gap-2">
+            <Link href={`/drops/${drop.id}/edit`}>Modifier mon drop</Link>
+            <DeleteDropButton dropId={drop.id} />
+          </div>
         )}
         {drop.author.avatarUrl && (
           <img

@@ -130,3 +130,21 @@ export async function createDrop(formData: FormData): Promise<{ error?: string }
     refresh()
     redirect("/drops")
 }
+
+export async function deleteDrop(dropId: number): Promise<{ error?: string }> {
+    if (!Number.isSafeInteger(dropId) || dropId < 1) {
+        return { error: "L’identifiant du drop est invalide." }
+    }
+
+    try {
+        await apiDelete(`/drops/${dropId}`, await requireSession())
+    } catch (error) {
+        if (error instanceof Error && !("digest" in error)) {
+            return { error: error.message }
+        }
+        throw error
+    }
+
+    refresh()
+    redirect("/drops")
+}
