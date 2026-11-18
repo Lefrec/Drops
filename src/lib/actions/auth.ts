@@ -22,13 +22,13 @@ export async function logout() {
     const cookieStore = await cookies()
     const token = cookieStore.get('session')?.value
 
-    // if (token) {
-    //     const res = await apiPost(`${process.env.API_URL}/auth/logout`, { Authorization: `Bearer ${token}` })
+    if (token) {
+        const res = await apiPost(`${process.env.API_URL}/auth/logout`, token)
 
-    //     if (!res.ok && res.status !== 401) {
-    //         throw new Error(`API ${res.status} sur /auth/logout`)
-    //     }
-    // }
+        if (!res.ok && res.status !== 401) {
+            throw new Error(`API ${res.status} sur /auth/logout`)
+        }
+    }
 
     setSession()
     redirect('/auth/login')

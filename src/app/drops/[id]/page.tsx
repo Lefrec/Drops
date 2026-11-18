@@ -1,9 +1,79 @@
-export default async function Drop({params}: {params: Promise<{id: string}>}) {
-  const id = (await params).id
+import { Suspense } from "react"
+import { apiGet } from "@/lib/api/client"
+import type { CommentPage, Drop } from "@/lib/api/types"
+import { requireSession } from "@/lib/session"
+import { CommentItem } from "../comment_item"
+import { CommentButton } from "../comment_button"
+import { LikeButton } from "../like_button"
 
+export default function DropPage({ params }: { params: Promise<{ id: string }> }) {
   return (
     <main>
-        <h1>Drop {id}</h1>
+      <Suspense fallback={<p>Chargement du drop...</p>}>
+        <DropContent params={params} />
+      </Suspense>
     </main>
+  )
+}
+
+async function DropContent({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const token = await requireSession()
+  const [drop, comments] = await Promise.all([
+    apiGet<Drop>(`/drops/${id}`, token),
+    apiGet<CommentPage>(`/drops/${id}/comments?pageSize=50`, token),
+  ])
+
+  return (
+    <article>
+      <header>
+        <p>Drop #{drop.id} · {drop.category}</p>
+        <h1>{drop.title}</h1>
+        <p>
+          Par {drop.isMine ? "moi" : drop.author.displayName} (@{drop.author.username})
+        </p>
+        {drop.author.avatarUrl && (
+          <img
+            src={drop.author.avatarUrl}
+            alt={`Avatar de ${drop.author.displayName}`}
+            width={64}
+            height={64}
+          />
+        )}
+      </header>
+
+      <p>{drop.content ?? "Aucun texte pour ce drop."}</p>
+
+      <footer>
+        <LikeButton
+          dropId={drop.id}
+          liked={drop.likedByMe}
+          likesCount={drop.likesCount}
+        />
+      </footer>
+
+      <section aria-labelledby="comments-heading">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 id="comments-heading">Commentaires ({comments.total})</h2>
+          <CommentButton dropId={drop.id} />
+        </div>
+        {comments.items.length === 0 ? (
+          <p className="mt-4 text-white/60">
+            Pas encore de commentaires. Soyez le premier à en laisser un !
+          </p>
+        ) : (
+          <ul className="mt-4">
+            {comments.items.map((comment) => (
+              <CommentItem key={comment.id} comment={comment} />
+            ))}
+          </ul>
+        )}
+        {comments.total > comments.items.length && (
+          <p className="mt-3 text-sm text-white/60">
+            Affichage des {comments.items.length} premiers commentaires sur {comments.total}.
+          </p>
+        )}
+      </section>
+    </article>
   )
 }

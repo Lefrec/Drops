@@ -8,6 +8,7 @@ export async function Header() {
   return (
     <header className="site-header">
       <Link className="site-header-brand" href="/drops">Drops</Link>
+      <Link href="/status">Status</Link>
       <nav className="site-header-nav" aria-label="Navigation principale">
         <Link href="/auth/login">Connexion</Link>
         {isLoggedIn && (
