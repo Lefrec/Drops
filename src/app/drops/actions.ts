@@ -75,3 +75,58 @@ export async function updateDrop(dropId: number, formData: FormData): Promise<{ 
     refresh()
     redirect(`/drops/${dropId}`)
 }
+
+export async function createDrop(formData: FormData): Promise<{ error?: string }> {
+    const title = formData.get("title")
+    const content = formData.get("content")
+    const category = formData.get("category")
+    const imageUrl = formData.get("imageUrl")
+    const lat = formData.get("lat")
+    const lng = formData.get("lng")
+    const precision = formData.get("precision")
+
+    if (typeof title !== "string" || !title.trim()) {
+        return { error: "Le titre est obligatoire." }
+    }
+    if (typeof content !== "string") {
+        return { error: "Le texte est invalide." }
+    }
+    if (typeof category !== "string" || !["note", "photo", "tip", "riddle"].includes(category)) {
+        return { error: "La catégorie sélectionnée est invalide." }
+    }
+    if (typeof imageUrl !== "string") {
+        return { error: "L’URL de l’image est invalide." }
+    }
+    if (category === "photo" && !imageUrl.trim()) {
+        return { error: "Une URL d’image est obligatoire pour la catégorie photo." }
+    }
+    if (typeof lat !== "string" || !lat.trim() || !Number.isFinite(Number(lat))) {
+        return { error: "La latitude est invalide." }
+    }
+    if (typeof lng !== "string" || !lng.trim() || !Number.isFinite(Number(lng))) {
+        return { error: "La longitude est invalide." }
+    }
+    if (precision !== "exact" && precision !== "approx") {
+        return { error: "La précision de la position est invalide." }
+    }
+
+    try {
+        await apiPost("/drops", await requireSession(), {
+            title: title.trim(),
+            content: content.trim() || null,
+            category,
+            imageUrl: imageUrl.trim() || null,
+            location: {
+                lat: Number(lat),
+                lng: Number(lng),
+                precision,
+            },
+        })
+    } catch (error) {
+        if (error instanceof Error) return { error: error.message }
+        throw error
+    }
+
+    refresh()
+    redirect("/drops")
+}
