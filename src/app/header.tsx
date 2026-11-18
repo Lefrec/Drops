@@ -11,6 +11,7 @@ export async function Header() {
       <Link href="/status">Status</Link>
       <nav className="site-header-nav" aria-label="Navigation principale">
         <Link href="/auth/login">Connexion</Link>
+        <Link href="/auth/register">Créer un compte</Link>
         {isLoggedIn && (
           <form action={logout}>
             <button type="submit">Déconnexion</button>
