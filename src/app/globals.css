@@ -25,6 +25,34 @@ body {
   line-height: 1.5;
 }
 
+.site-header {
+  box-sizing: border-box;
+  display: flex;
+  width: calc(100% - 2rem);
+  max-width: 52rem;
+  min-height: 4rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-inline: auto;
+  border-bottom: 1px solid var(--border);
+}
+
+.site-header-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.site-header-nav form {
+  margin: 0;
+}
+
+.site-header-brand {
+  font-weight: 600;
+  text-decoration: none;
+}
+
 main {
   box-sizing: border-box;
   display: flex;
