@@ -5,6 +5,7 @@ import { setSession } from "../session"
 import type { AuthResponse } from "@/lib/api/types"
 import { apiPost } from "../api/client"
 
+export type LoginState = { error?: string }
 
 export async function register(prev: {error?: string}, data: FormData) {
     const res = await apiPost('/auth/register', undefined, {
