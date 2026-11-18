@@ -50,19 +50,17 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
           liked={drop.likedByMe}
           likesCount={drop.likesCount}
         />
+        <CommentButton dropId={drop.id} />
       </footer>
 
       <section aria-labelledby="comments-heading">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 id="comments-heading">Commentaires ({comments.total})</h2>
-          <CommentButton dropId={drop.id} />
-        </div>
+        <h2 id="comments-heading">Commentaires ({comments.total})</h2>
         {comments.items.length === 0 ? (
           <p className="mt-4 text-white/60">
-            Pas encore de commentaires. Soyez le premier à en laisser un !
+            Pas encore de commentaires.
           </p>
         ) : (
-          <ul className="mt-4">
+          <ul className="mt-4 flex flex-col">
             {comments.items.map((comment) => (
               <CommentItem key={comment.id} comment={comment} />
             ))}

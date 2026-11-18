@@ -2,11 +2,11 @@ import type { Comment } from "@/lib/api/types"
 
 export function CommentItem({ comment }: { comment: Comment }) {
   return (
-    <li>
+    <li className="min-w-0">
       <div className="flex gap-3">
         {comment.author.avatarUrl ? (
           <img
-            className="h-9 w-9 rounded-full object-cover"
+            className="h-9 w-9 shrink-0 rounded-full object-cover"
             src={comment.author.avatarUrl}
             alt=""
             width={36}
@@ -20,12 +20,14 @@ export function CommentItem({ comment }: { comment: Comment }) {
             {comment.author.displayName.slice(0, 1).toUpperCase() || "?"}
           </span>
         )}
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-col">
           <p className="font-medium">
             {comment.isMine ? "Vous" : comment.author.displayName}
           </p>
-          <p className="text-sm text-white/55">@{comment.author.username}</p>
-          <p className="mt-2 whitespace-pre-wrap break-words">{comment.content}</p>
+          <p className="text-sm text-white/55">
+            @{comment.author.username}
+          </p>
+          <p className="mt-2 wrap-break-word">{comment.content}</p>
         </div>
       </div>
     </li>
