@@ -1,10 +1,15 @@
 'use client'
 
 import { useActionState } from "react"
-import { register } from "@/lib/actions/auth"
+import { AuthState, register } from "@/lib/actions/auth"
+
+const initialState: AuthState = {}
 
 export function RegisterForm() {
-  const [state, action, pending] = useActionState(register, {})
+  const [state, action, pending] = useActionState<AuthState, FormData>(
+    register,
+    initialState,
+  )
 
   return (
     <form action={action} className="flex flex-col">
