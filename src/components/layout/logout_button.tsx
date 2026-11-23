@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { logout } from "@/lib/actions/auth"
 import { Button } from "@/components/ui/button"
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogClose,
@@ -12,23 +11,30 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 
-export function LogoutButton({ menuItem = false }: { menuItem?: boolean }) {
+export function LogoutButton() {
   const [open, setOpen] = useState(false)
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      {menuItem ? (
-        <DropdownMenuItem className="w-full" onClick={() => setOpen(true)}>
-          Déconnexion
-        </DropdownMenuItem>
-      ) : (
-        <DialogTrigger render={<Button type="button" />}>
-          Déconnexion
-        </DialogTrigger>
-      )}
+    <>
+      <Button type="button" onClick={() => setOpen(true)}>
+        Déconnexion
+      </Button>
+      <LogoutConfirmationDialog open={open} onOpenChange={setOpen} />
+    </>
+  )
+}
+
+export function LogoutConfirmationDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}) {
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Se déconnecter ?</DialogTitle>
