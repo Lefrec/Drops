@@ -1,16 +1,36 @@
 'use client'
 
-import { useActionState } from "react"
+import { useActionState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import type { Category, Drop } from "@/lib/api/types"
 import { updateDrop } from "../../actions"
+import { toast } from "@/components/ui/toast"
 
-type FormState = { error?: string }
+type FormState = { error?: string; success?: boolean }
 
 export function DropEditForm({ drop, categories }: { drop: Drop; categories: Category[] }) {
-  const [state, action, pending] = useActionState<FormState, FormData>(
+  const router = useRouter()
+  const [state, action, pending] = useActionState<FormState | null, FormData>(
     (_previousState, formData) => updateDrop(drop.id, formData),
-    {},
+    null,
   )
+
+  useEffect(() => {
+    if (state?.error) {
+      toast.add({
+        title: "Erreur lors de la modification du drop",
+        description: state.error,
+        type: "error",
+      })
+    } else if (state?.success) {
+      toast.add({
+        title: "Drop modifié",
+        description: "Les modifications ont été enregistrées.",
+        type: "success",
+      })
+      router.push(`/drops/${drop.id}`)
+    }
+  }, [drop.id, router, state])
 
   return (
     <form action={action} className="flex flex-col gap-4">
@@ -41,7 +61,6 @@ export function DropEditForm({ drop, categories }: { drop: Drop; categories: Cat
           placeholder="https://..."
         />
       </label>
-      {state.error && <p role="alert">{state.error}</p>}
       <button type="submit" disabled={pending}>
         {pending ? "Enregistrement..." : "Enregistrer"}
       </button>

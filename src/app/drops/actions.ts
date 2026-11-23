@@ -4,9 +4,6 @@ import { apiDelete, apiPatch, apiPost } from "@/lib/api/client"
 import { requireSession } from "@/lib/session"
 import { refresh } from "next/cache"
 import { ApiError } from "next/dist/server/api-utils"
-import { redirect } from "next/navigation"
-
-import { toast } from "sonner"
 
 export async function toggleLike(dropId: number, liked: boolean) {
     await requireSession()
@@ -23,7 +20,7 @@ export async function toggleLike(dropId: number, liked: boolean) {
     return {}
 }
 
-export async function addComment(dropId: number, formData: FormData): Promise<{ error?: string }> {
+export async function addComment(dropId: number, formData: FormData): Promise<{ error?: string; success?: boolean }> {
     const content = formData.get("content")
     if (typeof content !== "string" || !content.trim()) {
         return { error: "Écrivez un commentaire avant de l’envoyer." }
@@ -37,10 +34,10 @@ export async function addComment(dropId: number, formData: FormData): Promise<{ 
     }
 
     refresh()
-    return {}
+    return { success: true }
 }
 
-export async function updateDrop(dropId: number, formData: FormData): Promise<{ error?: string }> {
+export async function updateDrop(dropId: number, formData: FormData): Promise<{ error?: string; success?: boolean }> {
     const title = formData.get("title")
     const content = formData.get("content")
     const category = formData.get("category")
@@ -75,10 +72,10 @@ export async function updateDrop(dropId: number, formData: FormData): Promise<{ 
     }
 
     refresh()
-    redirect(`/drops/${dropId}`)
+    return { success: true }
 }
 
-export async function createDrop(formData: FormData): Promise<{ error?: string }> {
+export async function createDrop(formData: FormData): Promise<{ error?: string; success?: boolean }> {
     const title = formData.get("title")
     const content = formData.get("content")
     const category = formData.get("category")
@@ -108,20 +105,25 @@ export async function createDrop(formData: FormData): Promise<{ error?: string }
         return { error: "La longitude est invalide." }
     }
     
-    const res = await apiPost("/drops", await requireSession(), {
-        title: title.trim(),
-        content: content.trim() || null,
-        category: category,
-        imageUrl: imageUrl.trim() || null,
-        lat: Number(lat),
-        lng: Number(lng)
-    })
+    try {
+        await apiPost("/drops", await requireSession(), {
+            title: title.trim(),
+            content: content.trim() || null,
+            category: category,
+            imageUrl: imageUrl.trim() || null,
+            lat: Number(lat),
+            lng: Number(lng)
+        })
+    } catch (error) {
+        if (error instanceof ApiError) return { error: error.message }
+        throw error
+    }
 
     refresh()
-    redirect("/drops")
+    return { success: true }
 }
 
-export async function deleteDrop(dropId: number): Promise<{ error?: string }> {
+export async function deleteDrop(dropId: number): Promise<{ error?: string; success?: boolean }> {
     if (!Number.isSafeInteger(dropId) || dropId < 1) {
         return { error: "L’identifiant du drop est invalide." }
     }
@@ -136,5 +138,5 @@ export async function deleteDrop(dropId: number): Promise<{ error?: string }> {
     }
 
     refresh()
-    redirect("/drops")
+    return { success: true }
 }

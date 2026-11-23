@@ -1,18 +1,35 @@
 'use client'
 
-import { useActionState, useState } from "react"
+import { useActionState, useEffect, useState } from "react"
 import { addComment } from "@/app/drops/actions";
 
 import { Button } from "@/components/ui/button"
+import { toast } from "@/components/ui/toast"
 
-type CommentState = { error?: string }
+type CommentState = { error?: string; success?: boolean }
 
 export function CommentButton({ dropId }: { dropId: number }) {
   const [isOpen, setIsOpen] = useState(false)
-  const [state, action, pending] = useActionState<CommentState, FormData>(
+  const [state, action, pending] = useActionState<CommentState | null, FormData>(
   (_previousState, formData) => addComment(dropId, formData),
-  {}
+  null
   )
+
+  useEffect(() => {
+    if (state?.error) {
+      toast.add({
+        title: "Erreur lors de l’ajout du commentaire",
+        description: state.error,
+        type: "error",
+      })
+    } else if (state?.success) {
+      toast.add({
+        title: "Commentaire ajouté",
+        description: "Votre commentaire a été publié.",
+        type: "success",
+      })
+    }
+  }, [state])
 
   return (
     <div className="flex gap-2">
@@ -35,10 +52,9 @@ export function CommentButton({ dropId }: { dropId: number }) {
             placeholder="Écrire un commentaire..."
             required
           />
-          <Button type="submit" disabled={pending}>{pending ? "Envoi..." : "Envoyé"}</Button>
+          <Button type="submit" disabled={pending}>{pending ? "Envoi..." : "Envoyer"}</Button>
         </form>
       )}
-      {isOpen && state.error && <p role="alert">{state.error}</p>}
     </div>
   )
 }
