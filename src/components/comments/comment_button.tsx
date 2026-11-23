@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from "react"
 import { addComment } from "@/app/drops/actions";
 
 import { Button } from "@/components/ui/button"
+import { Field, FieldLabel } from "@/components/ui/field"
 import { toast } from "@/components/ui/toast"
 
 type CommentState = { error?: string; success?: boolean }
@@ -41,17 +42,19 @@ export function CommentButton({ dropId }: { dropId: number }) {
         {isOpen ? "Fermer" : "Commenter"}
       </Button>
       {isOpen && (
-        <form action={action} className="flex-row!">
-          <label className="sr-only" htmlFor={`comment-${dropId}`}>
-            Votre commentaire
-          </label>
-          <input
-            id={`comment-${dropId}`}
-            name="content"
-            type="text"
-            placeholder="Écrire un commentaire..."
-            required
-          />
+        <form action={action} className="flex-row! items-end">
+          <Field className="min-w-0 flex-1">
+            <FieldLabel className="sr-only" htmlFor={`comment-${dropId}`}>
+              Votre commentaire
+            </FieldLabel>
+            <input
+              id={`comment-${dropId}`}
+              name="content"
+              type="text"
+              placeholder="Écrire un commentaire..."
+              required
+            />
+          </Field>
           <Button type="submit" disabled={pending}>{pending ? "Envoi..." : "Envoyer"}</Button>
         </form>
       )}

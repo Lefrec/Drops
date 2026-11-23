@@ -3,6 +3,7 @@
 import { useGeolocation } from "@/lib/use_geoloc"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
 
 export function LocationField() {
     const { status, coords, locate } = useGeolocation()
@@ -17,10 +18,11 @@ export function LocationField() {
     }, [coords])
 
     return (
-        <div className="flex flex-col gap-2">
-            <label>
-                Latitude
+        <FieldGroup>
+            <Field>
+                <FieldLabel htmlFor="drop-latitude">Latitude</FieldLabel>
                 <input
+                    id="drop-latitude"
                     name="lat"
                     type="number"
                     step="any"
@@ -28,10 +30,11 @@ export function LocationField() {
                     onChange={(e) => setLat(e.target.value)}
                     required
                 />
-            </label>
-            <label>
-                Longitude
+            </Field>
+            <Field>
+                <FieldLabel htmlFor="drop-longitude">Longitude</FieldLabel>
                 <input
+                    id="drop-longitude"
                     name="lng"
                     type="number"
                     step="any"
@@ -39,22 +42,22 @@ export function LocationField() {
                     onChange={(e) => setLng(e.target.value)}
                     required
                 />
-            </label>
+            </Field>
             <Button type="button" onClick={locate} disabled={status === "loading"}>
                 {status === "loading" ? "Localisation..." : "Utiliser ma position"}
             </Button>
             {status === "denied" && (
-                <p role="status">L’accès à votre position a été refusé.</p>
+                <FieldDescription role="status">L’accès à votre position a été refusé.</FieldDescription>
             )}
             {status === "unavailable" && (
-                <p role="status">La géolocalisation n’est pas disponible sur ce navigateur.</p>
+                <FieldDescription role="status">La géolocalisation n’est pas disponible sur ce navigateur.</FieldDescription>
             )}
             {status === "error" && (
-                <p role="status">Impossible de récupérer votre position.</p>
+                <FieldDescription role="status">Impossible de récupérer votre position.</FieldDescription>
             )}
             {status === "success" && (
-                <p role="status">Position récupérée.</p>
+                <FieldDescription role="status">Position récupérée.</FieldDescription>
             )}
-        </div>
+        </FieldGroup>
     )
 }
