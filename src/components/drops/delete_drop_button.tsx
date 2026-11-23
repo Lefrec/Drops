@@ -1,16 +1,25 @@
 'use client'
 
-import { useActionState, useEffect, useRef } from "react"
+import { useActionState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { deleteDrop } from "@/app/drops/actions";
 import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
 import { toast } from "@/components/ui/toast"
 
 type FormState = { error?: string; success?: boolean }
 
 export function DeleteDropButton({ dropId }: { dropId: number }) {
   const router = useRouter()
-  const dialogRef = useRef<HTMLDialogElement>(null)
   const [state, action, pending] = useActionState<FormState | null, FormData>(
     () => deleteDrop(dropId),
     null,
@@ -34,32 +43,26 @@ export function DeleteDropButton({ dropId }: { dropId: number }) {
   }, [router, state])
 
   return (
-    <>
-      <Button type="button" onClick={() => dialogRef.current?.showModal()}>
+    <Dialog>
+      <DialogTrigger render={<Button type="button" />}>
         Supprimer mon drop
-      </Button>
-      <dialog
-        ref={dialogRef}
-        aria-labelledby="delete-drop-title"
-        className="max-w-md border border-(--border) bg-(--surface) p-6 text-foreground) backdrop:bg-black/70"
-      >
-        <h2 id="delete-drop-title">Supprimer ce drop ?</h2>
-        <p className="my-4">Cette action est définitive.</p>
-        <div className="mt-4 flex flex-wrap gap-2">
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Supprimer ce drop ?</DialogTitle>
+          <DialogDescription>Cette action est définitive.</DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
           <form action={action}>
-            <Button type="submit" disabled={pending}>
+            <Button type="submit" variant="destructive" disabled={pending}>
               {pending ? "Suppression..." : "Oui, supprimer"}
             </Button>
           </form>
-          <Button
-            type="button"
-            disabled={pending}
-            onClick={() => dialogRef.current?.close()}
-          >
+          <DialogClose render={<Button type="button" variant="outline" disabled={pending} />}>
             Annuler
-          </Button>
-        </div>
-      </dialog>
-    </>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }

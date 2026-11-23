@@ -3,6 +3,7 @@
 import { apiDelete, apiPatch, apiPost } from "@/lib/api/client"
 import { requireSession } from "@/lib/session"
 import { refresh } from "next/cache"
+import { redirect } from "next/navigation"
 import { ApiError } from "next/dist/server/api-utils"
 
 export async function toggleLike(dropId: number, liked: boolean) {
@@ -137,6 +138,5 @@ export async function deleteDrop(dropId: number): Promise<{ error?: string; succ
         throw error
     }
 
-    refresh()
     return { success: true }
 }

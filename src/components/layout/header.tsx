@@ -1,7 +1,6 @@
-import { logout } from "@/lib/actions/auth";
-import { Button } from "@/components/ui/button";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { LogoutButton } from "./logout_button";
 
 export async function Header() {
   const isLoggedIn = Boolean((await cookies()).get("session")?.value);
@@ -16,9 +15,7 @@ export async function Header() {
         <Link href="/auth/login">Connexion</Link>
         <Link href="/auth/register">Créer un compte</Link>
         {isLoggedIn && (
-          <form action={logout}>
-            <Button type="submit">Déconnexion</Button>
-          </form>
+          <LogoutButton />
         )}
       </nav>
     </header>
