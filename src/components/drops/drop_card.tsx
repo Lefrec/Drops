@@ -1,24 +1,41 @@
-'use client'
 import type { Drop } from "@/lib/api/types"
-import { useState } from "react"
 import Link from "next/link"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 export function DropCard({ drop }: { drop: Drop }) {
-  const [expanded, setExpanded] = useState(false)
-
   return (
     <article>
-      <Link href={`/drops/${drop.id}`}>
-      <header>
-        <h2>{drop.title}</h2>
-        <p>{drop.category}</p>
-        <p>Par {drop.author.displayName}</p>
-      </header>
-      {drop.content && <p>{drop.content}</p>}
-      <footer>
-        <p>{drop.likesCount} j'aime</p>
-        <p>{drop.commentsCount} commentaires</p>
-      </footer>
+      <Link className="block" href={`/drops/${drop.id}`}>
+        <Card>
+          {drop.imageUrl && (
+            <img
+              src={drop.imageUrl}
+              alt={`Image du drop ${drop.title}`}
+              className="aspect-video w-full object-cover"
+            />
+          )}
+          <CardHeader>
+            <CardTitle>{drop.title}</CardTitle>
+            <CardDescription>{drop.category}</CardDescription>
+            <CardDescription>Par {drop.author.displayName}</CardDescription>
+          </CardHeader>
+          {drop.content && (
+            <CardContent>
+              <p>{drop.content}</p>
+            </CardContent>
+          )}
+          <CardFooter className="justify-between">
+            <p>{drop.likesCount} j'aime</p>
+            <p>{drop.commentsCount} commentaires</p>
+          </CardFooter>
+        </Card>
       </Link>
     </article>
   )

@@ -11,8 +11,8 @@
   color-scheme: dark;
   --background: oklch(0 0 0);
   --foreground: oklch(1 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card: oklch(0 0 0);
+  --card-foreground: oklch(1 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
@@ -133,21 +133,21 @@ main ul {
   list-style: none;
 }
 
-main article {
+/* main article {
   padding: 1rem;
   border: 1px solid var(--border);
   background: var(--surface);
-}
-
+} */
+/* 
 main article header {
   display: grid;
   gap: 0.25rem;
   margin-bottom: 0.75rem;
   padding-bottom: 0.75rem;
   border-bottom: 1px solid var(--border);
-}
+} */
 
-main article footer {
+/* main article footer {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
@@ -155,7 +155,7 @@ main article footer {
   padding-top: 0.75rem;
   border-top: 1px solid var(--border);
   color: var(--muted);
-}
+} */
 
 main form {
   display: flex;
@@ -165,7 +165,7 @@ main form {
   gap: 0.5rem;
 }
 
-input,
+/* input,
 button,
 .button {
   box-sizing: border-box;
@@ -175,21 +175,21 @@ button,
   background: var(--surface);
   color: var(--foreground);
   font: inherit;
-}
+} */
 
-main input {
+/* main input {
   width: 100%;
 }
 
 button {
   width: fit-content;
   cursor: pointer;
-}
-
+} */
+/* 
 button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
-}
+} */
 
 input:focus-visible,
 button:focus-visible,
@@ -245,7 +245,7 @@ a:focus-visible {
   color: var(--background);
 }
 
-.dark {
+/* .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -277,7 +277,7 @@ a:focus-visible {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-}
+} */
 
 @layer base {
   * {
