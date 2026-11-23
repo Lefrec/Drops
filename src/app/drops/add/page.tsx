@@ -3,7 +3,7 @@ import Link from "next/link"
 import { apiGet } from "@/lib/api/client"
 import type { Category } from "@/lib/api/types"
 import { requireSession } from "@/lib/session"
-import { DropCreateForm } from "@/components/forms/drop_create_form"
+import { DropCreateForm } from "@/components/drops/drop_create_form"
 
 export default function NewDropPage() {
   return (

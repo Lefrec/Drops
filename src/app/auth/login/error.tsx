@@ -1,5 +1,6 @@
 'use client' // Error boundaries must be Client Components
 import { useEffect } from 'react'
+import { Button } from "@/components/ui/button"
 
 export default function ErrorPage({error, retry}: {error: unknown, retry: () => void}) {
     useEffect(() => {
@@ -8,7 +9,7 @@ export default function ErrorPage({error, retry}: {error: unknown, retry: () => 
     return (
         <main>
             <h1>Failed to login</h1>
-            <button onClick={() => retry()}>Try again</button>
+            <Button type="button" onClick={() => retry()}>Try again</Button>
         </main>
   )
 }

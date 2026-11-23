@@ -1,5 +1,5 @@
-import { SearchBox } from "@/components/forms/searchbox"
-import { Categories } from "@/components/forms/categories"
+import { SearchBox } from "@/components/search/searchbox"
+import { Categories } from "@/components/search/categories"
 import { Suspense } from "react"
 import { SearchParams } from "next/dist/server/request/search-params"
 import { DropList } from "@/components/drops/drop_list"

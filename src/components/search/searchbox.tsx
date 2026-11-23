@@ -1,6 +1,7 @@
 'use client'
 import { useRouter, useSearchParams } from "next/navigation"
 import { useDebouncedCallback } from "use-debounce"
+import { Field, FieldLabel } from "@/components/ui/field"
 
 export function SearchBox() {
     const router = useRouter()
@@ -12,5 +13,15 @@ export function SearchBox() {
         router.replace(`?${nextURL}`)
     }, 300) // <- debounce timer
 
-    return <input defaultValue={params.get('q') ?? ''} onChange={(e) => onSearch(e.target.value)} />
+    return (
+        <Field className="max-w-sm">
+            <FieldLabel className="sr-only" htmlFor="drop-search">Rechercher des drops</FieldLabel>
+            <input
+                id="drop-search"
+                type="search"
+                defaultValue={params.get('q') ?? ''}
+                onChange={(e) => onSearch(e.target.value)}
+            />
+        </Field>
+    )
 }
