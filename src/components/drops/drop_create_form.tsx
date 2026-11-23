@@ -8,6 +8,13 @@ import { LocationField } from "./location_field"
 
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { toast } from "@/components/ui/toast"
 
 type FormState = { error?: string; success?: boolean }
@@ -49,13 +56,26 @@ export function DropCreateForm({ categories }: { categories: Category[] }) {
         </Field>
         <Field>
           <FieldLabel htmlFor="drop-category">Catégorie</FieldLabel>
-          <select id="drop-category" name="category" defaultValue={categories[0]?.id} required>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.label}
-              </option>
-            ))}
-          </select>
+          <Select
+            name="category"
+            defaultValue={categories[0]?.id}
+            required
+            items={categories.map((category) => ({
+              value: category.id,
+              label: category.label,
+            }))}
+          >
+            <SelectTrigger id="drop-category">
+              <SelectValue placeholder="Choisir une catégorie" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category.id} value={category.id}>
+                  {category.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </Field>
         <Field>
           <FieldLabel htmlFor="drop-image-url">URL de l’image</FieldLabel>

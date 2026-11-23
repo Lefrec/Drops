@@ -1,12 +1,12 @@
 import { Suspense } from "react"
-import Link from "next/link"
 import { apiGet } from "@/lib/api/client"
-import type { CommentPage, Drop } from "@/lib/api/types"
+import type { Category, CommentPage, Drop } from "@/lib/api/types"
 import { requireSession } from "@/lib/session"
 import { CommentItem } from "@/components/comments/comment_item"
 import { CommentButton } from "@/components/comments/comment_button"
 import { LikeButton } from "@/components/drops/like_button"
 import { DeleteDropButton } from "@/components/drops/delete_drop_button"
+import { DropEditForm } from "@/components/drops/drop_edit_form"
 
 export default function DropPage({ params }: { params: Promise<{ id: string }> }) {
   return (
@@ -25,6 +25,9 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
     apiGet<Drop>(`/drops/${id}`, token),
     apiGet<CommentPage>(`/drops/${id}/comments?pageSize=50`, token),
   ])
+  const categories = drop.isMine
+    ? await apiGet<Category[]>("/categories", token)
+    : []
 
   return (
     <article>
@@ -53,7 +56,7 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
         </div>
         {drop.isMine && (
           <div className="flex flex-wrap gap-2">
-            <Link className="button" href={`/drops/${drop.id}/edit`}>Modifier mon drop</Link>
+            <DropEditForm drop={drop} categories={categories} />
             <DeleteDropButton dropId={drop.id} />
           </div>
         )}
