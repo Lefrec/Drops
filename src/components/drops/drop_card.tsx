@@ -17,10 +17,6 @@ export function DropCard({ drop }: { drop: Drop }) {
         <Card>
           
           <CardHeader>
-                  <Link
-        className="flex w-fit items-center gap-2"
-        href={`/users/${encodeURIComponent(drop.author.username)}`}
-      >
         <UserAvatar
           displayName={drop.author.displayName}
           avatarUrl={drop.author.avatarUrl}
@@ -29,7 +25,6 @@ export function DropCard({ drop }: { drop: Drop }) {
           <span className="font-medium">{drop.author.displayName}</span>
           <span className="text-sm text-muted-foreground">@{drop.author.username}</span>
         </span>
-      </Link>
             <CardTitle>{drop.title}</CardTitle>
             <CardDescription>{drop.category}</CardDescription>
           </CardHeader>
