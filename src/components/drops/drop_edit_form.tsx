@@ -27,7 +27,7 @@ import {
 export function DropEditForm({ drop, categories }: { drop: Drop; categories: Category[] }) {
   const [open, setOpen] = useState(false)
   const [formKey, setFormKey] = useState(0)
-  const [category, setCategory] = useState<Category>(drop.category)
+  const [category, setCategory] = useState<Drop["category"]>(drop.category)
   const [, action, pending] = useActionState<null, FormData>(
     async (_previousState, formData) => {
       const result = await updateDrop(drop.id, formData)
@@ -93,7 +93,7 @@ export function DropEditForm({ drop, categories }: { drop: Drop; categories: Cat
             </Field>
             <Field>
               <FieldLabel htmlFor={`edit-drop-category-${drop.id}`}>Catégorie</FieldLabel>
-              <Select
+              <Select<Drop["category"]>
                 name="category"
                 value={category}
                 onValueChange={(value) => {
