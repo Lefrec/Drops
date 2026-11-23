@@ -12,6 +12,7 @@ import { DropEditForm } from "@/components/drops/drop_edit_form"
 import { UserAvatar } from "@/components/users/user_avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
+import Link from "next/link"
 
 export default function DropPage({ params }: { params: Promise<{ id: string }> }) {
   return (
@@ -64,16 +65,29 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
           )}
         </div>
         <div className="flex items-center gap-3">
-          <UserAvatar
-            displayName={drop.author.displayName}
-            avatarUrl={drop.author.avatarUrl}
-            size="lg"
-          />
+          <Link
+            href={`/users/${encodeURIComponent(drop.author.username)}`}
+            aria-label={`Voir le profil de ${drop.author.displayName}`}
+          >
+            <UserAvatar
+              displayName={drop.author.displayName}
+              avatarUrl={drop.author.avatarUrl}
+              size="lg"
+            />
+          </Link>
           <div className="min-w-0">
-            <p className="font-medium">
+            <Link
+              className="block font-medium underline-offset-4 hover:underline"
+              href={`/users/${encodeURIComponent(drop.author.username)}`}
+            >
               {drop.isMine ? "Vous" : drop.author.displayName}
-            </p>
-            <p className="text-sm text-muted-foreground">@{drop.author.username}</p>
+            </Link>
+            <Link
+              className="block text-sm text-muted-foreground underline-offset-4 hover:underline"
+              href={`/users/${encodeURIComponent(drop.author.username)}`}
+            >
+              @{drop.author.username}
+            </Link>
           </div>
         </div>
       </header>

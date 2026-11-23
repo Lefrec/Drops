@@ -1,7 +1,9 @@
 "use client"
 
+import { useState } from "react"
 import { logout } from "@/lib/actions/auth"
 import { Button } from "@/components/ui/button"
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import {
   Dialog,
   DialogClose,
@@ -13,12 +15,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-export function LogoutButton() {
+export function LogoutButton({ menuItem = false }: { menuItem?: boolean }) {
+  const [open, setOpen] = useState(false)
+
   return (
-    <Dialog>
-      <DialogTrigger render={<Button type="button" />}>
-        Déconnexion
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      {menuItem ? (
+        <DropdownMenuItem className="w-full" onClick={() => setOpen(true)}>
+          Déconnexion
+        </DropdownMenuItem>
+      ) : (
+        <DialogTrigger render={<Button type="button" />}>
+          Déconnexion
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Se déconnecter ?</DialogTitle>
