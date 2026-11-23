@@ -1,63 +1,92 @@
 'use client'
 
-import { useActionState, useEffect, useState } from "react"
-import { addComment } from "@/app/drops/actions";
+import { useActionState, useState } from "react"
+import { addComment } from "@/app/drops/actions"
 
 import { Button } from "@/components/ui/button"
-import { Field, FieldLabel } from "@/components/ui/field"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { toast } from "@/components/ui/toast"
 
-type CommentState = { error?: string; success?: boolean }
-
 export function CommentButton({ dropId }: { dropId: number }) {
-  const [isOpen, setIsOpen] = useState(false)
-  const [state, action, pending] = useActionState<CommentState | null, FormData>(
-  (_previousState, formData) => addComment(dropId, formData),
-  null
+  const [open, setOpen] = useState(false)
+  const [formKey, setFormKey] = useState(0)
+  const [, action, pending] = useActionState<null, FormData>(
+    async (_previousState, formData) => {
+      const result = await addComment(dropId, formData)
+      if (result.error) {
+        toast.add({
+          title: "Erreur lors de l’ajout du commentaire",
+          description: result.error,
+          type: "error",
+        })
+      } else {
+        toast.add({
+          title: "Commentaire ajouté",
+          description: "Votre commentaire a été publié.",
+          type: "success",
+        })
+        setFormKey((key) => key + 1)
+        setOpen(false)
+      }
+      return null
+    },
+    null,
   )
 
-  useEffect(() => {
-    if (state?.error) {
-      toast.add({
-        title: "Erreur lors de l’ajout du commentaire",
-        description: state.error,
-        type: "error",
-      })
-    } else if (state?.success) {
-      toast.add({
-        title: "Commentaire ajouté",
-        description: "Votre commentaire a été publié.",
-        type: "success",
-      })
-    }
-  }, [state])
-
   return (
-    <div className="flex gap-2">
-      <Button
-        type="button"
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen((open) => !open)}
-      >
-        {isOpen ? "Fermer" : "Commenter"}
-      </Button>
-      {isOpen && (
-        <form action={action} className="flex-row! items-end">
-          <Field className="min-w-0 flex-1">
-            <FieldLabel className="sr-only" htmlFor={`comment-${dropId}`}>
-              Votre commentaire
-            </FieldLabel>
-            <input
-              id={`comment-${dropId}`}
-              name="content"
-              type="text"
-              placeholder="Écrire un commentaire..."
-              required
-            />
-          </Field>
-          <Button type="submit" disabled={pending}>{pending ? "Envoi..." : "Envoyer"}</Button>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen && pending) return
+        if (!nextOpen) setFormKey((key) => key + 1)
+        setOpen(nextOpen)
+      }}
+    >
+      <DialogTrigger render={<Button type="button" variant="outline" />}>
+        Commenter
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Ajouter un commentaire</DialogTitle>
+          <DialogDescription>
+            Partagez votre réponse ou votre avis sur ce drop.
+          </DialogDescription>
+        </DialogHeader>
+        <form key={formKey} action={action}>
+          <FieldGroup>
+            <Field>
+              <FieldLabel htmlFor={`comment-${dropId}`}>Votre commentaire</FieldLabel>
+              <textarea
+                id={`comment-${dropId}`}
+                name="content"
+                placeholder="Écrire un commentaire..."
+                required
+                autoFocus
+              />
+            </Field>
+            <DialogFooter>
+              <DialogClose
+                render={<Button type="button" variant="outline" disabled={pending} />}
+              >
+                Annuler
+              </DialogClose>
+              <Button type="submit" disabled={pending}>
+                {pending ? "Envoi..." : "Envoyer"}
+              </Button>
+            </DialogFooter>
+          </FieldGroup>
         </form>
-      )}
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
