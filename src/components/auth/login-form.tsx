@@ -14,11 +14,26 @@ export function LoginForm() {
             <FieldGroup>
                 <Field>
                     <FieldLabel htmlFor="login">Login</FieldLabel>
-                    <input id="login" name="login" autoComplete="username" required />
+                    <input
+                        id="login"
+                        name="login"
+                        autoComplete="username"
+                        required
+                        aria-invalid={Boolean(state.fields?.login)}
+                    />
+                    <FieldError>{state.fields?.login?.join(" ")}</FieldError>
                 </Field>
                 <Field>
                     <FieldLabel htmlFor="password">Mot de passe</FieldLabel>
-                    <input id="password" name="password" type="password" autoComplete="current-password" required />
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        autoComplete="current-password"
+                        required
+                        aria-invalid={Boolean(state.fields?.password)}
+                    />
+                    <FieldError>{state.fields?.password?.join(" ")}</FieldError>
                 </Field>
                 <FieldError>{state.error}</FieldError>
                 <Button type="submit" disabled={pending}>Se connecter</Button>

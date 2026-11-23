@@ -1,6 +1,7 @@
 'use client'
 
-import { useActionState, useState } from "react"
+import { useActionState, useEffect, useState } from "react"
+import type { ActionState } from "@/lib/api/types"
 import { addComment } from "@/app/drops/actions"
 
 import { Button } from "@/components/ui/button"
@@ -14,34 +15,40 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { toast } from "@/components/ui/toast"
 
 export function CommentButton({ dropId }: { dropId: number }) {
   const [open, setOpen] = useState(false)
   const [formKey, setFormKey] = useState(0)
-  const [, action, pending] = useActionState<null, FormData>(
+  const [resultFormKey, setResultFormKey] = useState(0)
+  const [state, action, pending] = useActionState<ActionState | null, FormData>(
     async (_previousState, formData) => {
       const result = await addComment(dropId, formData)
-      if (result.error) {
-        toast.add({
-          title: "Erreur lors de l’ajout du commentaire",
-          description: result.error,
-          type: "error",
-        })
-      } else {
-        toast.add({
-          title: "Commentaire ajouté",
-          description: "Votre commentaire a été publié.",
-          type: "success",
-        })
-        setFormKey((key) => key + 1)
-        setOpen(false)
-      }
-      return null
+      setResultFormKey(formKey)
+      return result
     },
     null,
   )
+  const currentState = resultFormKey === formKey ? state : null
+
+  useEffect(() => {
+    if (currentState?.error && !currentState.fields) {
+      toast.add({
+        title: "Erreur lors de l’ajout du commentaire",
+        description: currentState.error,
+        type: "error",
+      })
+    } else if (currentState?.success) {
+      toast.add({
+        title: "Commentaire ajouté",
+        description: "Votre commentaire a été publié.",
+        type: "success",
+      })
+      setFormKey((key) => key + 1)
+      setOpen(false)
+    }
+  }, [currentState])
 
   return (
     <Dialog
@@ -64,6 +71,7 @@ export function CommentButton({ dropId }: { dropId: number }) {
         </DialogHeader>
         <form key={formKey} action={action}>
           <FieldGroup>
+            {currentState?.fields && <FieldError>{currentState.error}</FieldError>}
             <Field>
               <FieldLabel htmlFor={`comment-${dropId}`}>Votre commentaire</FieldLabel>
               <textarea
@@ -72,7 +80,9 @@ export function CommentButton({ dropId }: { dropId: number }) {
                 placeholder="Écrire un commentaire..."
                 required
                 autoFocus
+                aria-invalid={Boolean(currentState?.fields?.content)}
               />
+              <FieldError>{currentState?.fields?.content?.join(" ")}</FieldError>
             </Field>
             <DialogFooter>
               <DialogClose

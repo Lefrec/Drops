@@ -1,11 +1,11 @@
 'use client'
 
-import { useActionState, useState } from "react"
-import type { Category, Drop } from "@/lib/api/types"
+import { useActionState, useEffect, useState } from "react"
+import type { ActionState, Category, Drop } from "@/lib/api/types"
 import { updateDrop } from "@/app/drops/actions"
 import { toast } from "@/components/ui/toast"
 import { Button } from "@/components/ui/button"
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import {
   Dialog,
   DialogClose,
@@ -27,29 +27,35 @@ import {
 export function DropEditForm({ drop, categories }: { drop: Drop; categories: Category[] }) {
   const [open, setOpen] = useState(false)
   const [formKey, setFormKey] = useState(0)
+  const [resultFormKey, setResultFormKey] = useState(0)
   const [category, setCategory] = useState<Drop["category"]>(drop.category)
-  const [, action, pending] = useActionState<null, FormData>(
+  const [state, action, pending] = useActionState<ActionState | null, FormData>(
     async (_previousState, formData) => {
       const result = await updateDrop(drop.id, formData)
-      if (result.error) {
-        toast.add({
-          title: "Erreur lors de la modification du drop",
-          description: result.error,
-          type: "error",
-        })
-      } else {
-        toast.add({
-          title: "Drop modifié",
-          description: "Les modifications ont été enregistrées.",
-          type: "success",
-        })
-        setFormKey((key) => key + 1)
-        setOpen(false)
-      }
-      return null
+      setResultFormKey(formKey)
+      return result
     },
     null,
   )
+  const currentState = resultFormKey === formKey ? state : null
+
+  useEffect(() => {
+    if (currentState?.error && !currentState.fields) {
+      toast.add({
+        title: "Erreur lors de la modification du drop",
+        description: currentState.error,
+        type: "error",
+      })
+    } else if (currentState?.success) {
+      toast.add({
+        title: "Drop modifié",
+        description: "Les modifications ont été enregistrées.",
+        type: "success",
+      })
+      setFormKey((key) => key + 1)
+      setOpen(false)
+    }
+  }, [currentState])
 
   return (
     <Dialog
@@ -73,6 +79,7 @@ export function DropEditForm({ drop, categories }: { drop: Drop; categories: Cat
         </DialogHeader>
         <form key={formKey} action={action}>
           <FieldGroup>
+            {currentState?.fields && <FieldError>{currentState.error}</FieldError>}
             <Field>
               <FieldLabel htmlFor={`edit-drop-title-${drop.id}`}>Titre</FieldLabel>
               <input
@@ -81,7 +88,9 @@ export function DropEditForm({ drop, categories }: { drop: Drop; categories: Cat
                 type="text"
                 defaultValue={drop.title}
                 required
+                aria-invalid={Boolean(currentState?.fields?.title)}
               />
+              <FieldError>{currentState?.fields?.title?.join(" ")}</FieldError>
             </Field>
             <Field>
               <FieldLabel htmlFor={`edit-drop-content-${drop.id}`}>Texte</FieldLabel>
@@ -89,7 +98,9 @@ export function DropEditForm({ drop, categories }: { drop: Drop; categories: Cat
                 id={`edit-drop-content-${drop.id}`}
                 name="content"
                 defaultValue={drop.content ?? ""}
+                aria-invalid={Boolean(currentState?.fields?.content)}
               />
+              <FieldError>{currentState?.fields?.content?.join(" ")}</FieldError>
             </Field>
             <Field>
               <FieldLabel htmlFor={`edit-drop-category-${drop.id}`}>Catégorie</FieldLabel>
@@ -104,7 +115,7 @@ export function DropEditForm({ drop, categories }: { drop: Drop; categories: Cat
                   label: category.label,
                 }))}
               >
-                <SelectTrigger id={`edit-drop-category-${drop.id}`}>
+                <SelectTrigger id={`edit-drop-category-${drop.id}`} aria-invalid={Boolean(currentState?.fields?.category)}>
                   <SelectValue placeholder="Choisir une catégorie" />
                 </SelectTrigger>
                 <SelectContent>
@@ -115,6 +126,7 @@ export function DropEditForm({ drop, categories }: { drop: Drop; categories: Cat
                   ))}
                 </SelectContent>
               </Select>
+              <FieldError>{currentState?.fields?.category?.join(" ")}</FieldError>
             </Field>
             <Field>
               <FieldLabel htmlFor={`edit-drop-image-url-${drop.id}`}>URL de l’image</FieldLabel>
@@ -124,8 +136,10 @@ export function DropEditForm({ drop, categories }: { drop: Drop; categories: Cat
                 type="url"
                 defaultValue={drop.imageUrl ?? ""}
                 placeholder="https://..."
+                aria-invalid={Boolean(currentState?.fields?.imageUrl)}
               />
               <FieldDescription>Obligatoire pour la catégorie photo.</FieldDescription>
+              <FieldError>{currentState?.fields?.imageUrl?.join(" ")}</FieldError>
             </Field>
             <DialogFooter>
               <DialogClose

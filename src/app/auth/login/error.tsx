@@ -8,8 +8,9 @@ export default function ErrorPage({error, retry}: {error: unknown, retry: () => 
     }, [error])
     return (
         <main>
-            <h1>Failed to login</h1>
-            <Button type="button" onClick={() => retry()}>Try again</Button>
+                <h1>Impossible de charger la page de connexion</h1>
+                <p>Réessayez dans quelques instants.</p>
+                <Button type="button" onClick={retry}>Réessayer</Button>
         </main>
   )
 }

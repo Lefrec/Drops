@@ -1,7 +1,9 @@
 import { Suspense } from "react"
-import { apiGet } from "@/lib/api/client"
+import { ApiError, apiGet } from "@/lib/api/client"
+import { notFound } from "next/navigation"
 import type { Category, CommentPage, Drop } from "@/lib/api/types"
-import { requireSession } from "@/lib/session"
+import { getSessionToken } from "@/lib/session"
+import { LoginRequired } from "@/components/auth/login_required"
 import { CommentItem } from "@/components/comments/comment_item"
 import { CommentButton } from "@/components/comments/comment_button"
 import { LikeButton } from "@/components/drops/like_button"
@@ -23,11 +25,20 @@ export default function DropPage({ params }: { params: Promise<{ id: string }> }
 
 async function DropContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const token = await requireSession()
-  const [drop, comments] = await Promise.all([
-    apiGet<Drop>(`/drops/${id}`, token),
-    apiGet<CommentPage>(`/drops/${id}/comments?pageSize=50`, token),
-  ])
+  const token = await getSessionToken()
+  if (!token) return <LoginRequired action="consulter ce drop" />
+
+  let drop: Drop
+  let comments: CommentPage
+  try {
+    [drop, comments] = await Promise.all([
+      apiGet<Drop>(`/drops/${id}`, token),
+      apiGet<CommentPage>(`/drops/${id}/comments?pageSize=50`, token),
+    ])
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) notFound()
+    throw error
+  }
   const categories = drop.isMine
     ? await apiGet<Category[]>("/categories", token)
     : []

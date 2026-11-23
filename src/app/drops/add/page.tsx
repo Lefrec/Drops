@@ -2,8 +2,9 @@ import { Suspense } from "react"
 import Link from "next/link"
 import { apiGet } from "@/lib/api/client"
 import type { Category } from "@/lib/api/types"
-import { requireSession } from "@/lib/session"
+import { getSessionToken } from "@/lib/session"
 import { DropCreateForm } from "@/components/drops/drop_create_form"
+import { LoginRequired } from "@/components/auth/login_required"
 
 export default function NewDropPage() {
   return (
@@ -17,7 +18,10 @@ export default function NewDropPage() {
 }
 
 async function DropCreateContent() {
-  const categories = await apiGet<Category[]>("/categories", await requireSession())
+  const token = await getSessionToken()
+  if (!token) return <LoginRequired action="créer un drop" />
+
+  const categories = await apiGet<Category[]>("/categories", token)
 
   return (
     <>
