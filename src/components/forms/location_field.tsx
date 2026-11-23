@@ -2,6 +2,7 @@
 
 import { useGeolocation } from "@/lib/use_geoloc"
 import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button"
 
 export function LocationField() {
     const { status, coords, locate } = useGeolocation()
@@ -39,9 +40,9 @@ export function LocationField() {
                     required
                 />
             </label>
-            <button type="button" onClick={locate} disabled={status === "loading"}>
+            <Button type="button" onClick={locate} disabled={status === "loading"}>
                 {status === "loading" ? "Localisation..." : "Utiliser ma position"}
-            </button>
+            </Button>
             {status === "denied" && (
                 <p role="status">L’accès à votre position a été refusé.</p>
             )}

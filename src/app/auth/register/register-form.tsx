@@ -2,6 +2,7 @@
 
 import { useActionState } from "react"
 import { AuthState, register } from "@/lib/actions/auth"
+import { Button } from "@/components/ui/button"
 
 const initialState: AuthState = {}
 
@@ -35,9 +36,9 @@ export function RegisterForm() {
       <textarea id="bio" name="bio" />
 
       {state.error && <p role="alert">{state.error}</p>}
-      <button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending}>
         {pending ? "Création du compte..." : "Créer mon compte"}
-      </button>
+      </Button>
     </form>
   )
 }

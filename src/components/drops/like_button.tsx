@@ -2,6 +2,7 @@
 
 import { useActionState, useOptimistic } from "react";
 import { toggleLike } from "@/app/drops/actions";
+import { Button } from "@/components/ui/button"
 
 export function LikeButton({dropId, liked, likesCount}: {dropId: number, liked: boolean, likesCount: number}) {
     const [optimisticLike, setOptimisticLike] = useOptimistic(
@@ -16,9 +17,9 @@ export function LikeButton({dropId, liked, likesCount}: {dropId: number, liked: 
 
     return (
         <form action={action}>
-            <button disabled={pending} aria-pressed={optimisticLike.liked}>
+            <Button type="submit" disabled={pending} aria-pressed={optimisticLike.liked}>
                 {optimisticLike.liked ? '♥' : '♡'} {optimisticLike.likesCount}
-            </button>
+            </Button>
             {state.error && <p role="alert">{state.error}</p>}
         </form>
     )

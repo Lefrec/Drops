@@ -1,5 +1,6 @@
 "use client"; // Error boundaries must be Client Components
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function ErrorPage({
   error,
@@ -14,7 +15,7 @@ export default function ErrorPage({
   return (
     <main>
       <h1>Something went wrong while loading Drop page</h1>
-      <button onClick={() => retry()}>Try again</button>
+      <Button type="button" onClick={() => retry()}>Try again</Button>
     </main>
   );
 }

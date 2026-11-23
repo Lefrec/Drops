@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { deleteDrop } from "@/app/drops/actions";
+import { Button } from "@/components/ui/button"
 import { toast } from "@/components/ui/toast"
 
 type FormState = { error?: string; success?: boolean }
@@ -34,9 +35,9 @@ export function DeleteDropButton({ dropId }: { dropId: number }) {
 
   return (
     <>
-      <button type="button" onClick={() => dialogRef.current?.showModal()}>
+      <Button type="button" onClick={() => dialogRef.current?.showModal()}>
         Supprimer mon drop
-      </button>
+      </Button>
       <dialog
         ref={dialogRef}
         aria-labelledby="delete-drop-title"
@@ -46,17 +47,17 @@ export function DeleteDropButton({ dropId }: { dropId: number }) {
         <p className="my-4">Cette action est définitive.</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <form action={action}>
-            <button type="submit" disabled={pending}>
+            <Button type="submit" disabled={pending}>
               {pending ? "Suppression..." : "Oui, supprimer"}
-            </button>
+            </Button>
           </form>
-          <button
+          <Button
             type="button"
             disabled={pending}
             onClick={() => dialogRef.current?.close()}
           >
             Annuler
-          </button>
+          </Button>
         </div>
       </dialog>
     </>

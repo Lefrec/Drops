@@ -3,8 +3,9 @@
 import { useActionState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import type { Category, Drop } from "@/lib/api/types"
-import { updateDrop } from "../../actions"
+import { updateDrop } from "@/app/drops/actions"
 import { toast } from "@/components/ui/toast"
+import { Button } from "@/components/ui/button"
 
 type FormState = { error?: string; success?: boolean }
 
@@ -61,9 +62,9 @@ export function DropEditForm({ drop, categories }: { drop: Drop; categories: Cat
           placeholder="https://..."
         />
       </label>
-      <button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending}>
         {pending ? "Enregistrement..." : "Enregistrer"}
-      </button>
+      </Button>
     </form>
   )
 }

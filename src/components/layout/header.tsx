@@ -1,4 +1,5 @@
 import { logout } from "@/lib/actions/auth";
+import { Button } from "@/components/ui/button";
 import { cookies } from "next/headers";
 import Link from "next/link";
 
@@ -16,7 +17,7 @@ export async function Header() {
         <Link href="/auth/register">Créer un compte</Link>
         {isLoggedIn && (
           <form action={logout}>
-            <button type="submit">Déconnexion</button>
+            <Button type="submit">Déconnexion</Button>
           </form>
         )}
       </nav>

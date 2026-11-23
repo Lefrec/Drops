@@ -33,13 +33,13 @@ export function CommentButton({ dropId }: { dropId: number }) {
 
   return (
     <div className="flex gap-2">
-      <button
+      <Button
         type="button"
         aria-expanded={isOpen}
         onClick={() => setIsOpen((open) => !open)}
       >
         {isOpen ? "Fermer" : "Commenter"}
-      </button>
+      </Button>
       {isOpen && (
         <form action={action} className="flex-row!">
           <label className="sr-only" htmlFor={`comment-${dropId}`}>

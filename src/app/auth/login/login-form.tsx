@@ -1,6 +1,7 @@
 'use client'
 import { useActionState } from "react"
 import { login, type AuthState } from "@/lib/actions/auth"
+import { Button } from "@/components/ui/button"
 
 const initialState: AuthState = {}
 
@@ -14,7 +15,7 @@ export function LoginForm() {
             <label htmlFor="password">Password</label>
             <input name="password" type="password" required/>
             {state.error && <p role="alert">{state.error}</p>}
-            <button disabled={pending}>Se connecter</button>
+            <Button type="submit" disabled={pending}>Se connecter</Button>
         </form>
     )
 }
