@@ -8,3 +8,8 @@ export type Comment = S['Comment']
 export type CommentPage = S['CommentPage']
 export type Category = S['Category']
 export type AuthResponse = S['AuthResponse']
+export type ActionState = {
+  error?: string
+  fields?: Record<string, string[]>
+  success?: boolean
+}

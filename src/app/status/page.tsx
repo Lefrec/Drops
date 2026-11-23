@@ -12,6 +12,13 @@ export default function StatusPage() {
 }
 
 async function Health() {
-    const res = await fetch(`${process.env.API_URL}/health`)
-    return <p>{res.ok ? 'API en ligne' : 'API hors ligne'}</p>
+    let online = false
+    try {
+        const res = await fetch(`${process.env.API_URL}/health`, { cache: 'no-store' })
+        online = res.ok
+    } catch (error) {
+        if (!(error instanceof TypeError)) throw error
+    }
+
+    return <p role="status">{online ? 'API en ligne' : 'API hors ligne'}</p>
 }

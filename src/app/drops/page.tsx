@@ -4,6 +4,8 @@ import { Suspense } from "react"
 import { SearchParams } from "next/dist/server/request/search-params"
 import { DropList } from "@/components/drops/drop_list"
 import Link from "next/link"
+import { getSessionToken } from "@/lib/session"
+import { LoginRequired } from "@/components/auth/login_required"
 
 export default function DropPage({searchParams}: {searchParams: Promise<SearchParams>}) {
   return (
@@ -14,16 +16,28 @@ export default function DropPage({searchParams}: {searchParams: Promise<SearchPa
           Créer un drop
         </Link>
       </header>
-      <Suspense fallback={null}>
-        <SearchBox/>
-        <nav className="category-filters" aria-label="Filtrer par catégorie">
-          <Categories searchParams={searchParams}/>
-        </nav>
-      </Suspense>
       <Suspense fallback={<p>Chargement des drops...</p>}>
-        <DropList searchParams={searchParams}/>
+        <DropsContent searchParams={searchParams} />
       </Suspense>
     </main>
   )
 }
 
+async function DropsContent({ searchParams }: { searchParams: Promise<SearchParams> }) {
+  const token = await getSessionToken()
+  if (!token) return <LoginRequired action="consulter les drops" />
+
+  return (
+    <>
+      <Suspense fallback={null}>
+        <SearchBox />
+        <nav className="category-filters" aria-label="Filtrer par catégorie">
+          <Categories searchParams={searchParams} token={token} />
+        </nav>
+      </Suspense>
+      <Suspense fallback={<p>Chargement des drops...</p>}>
+        <DropList searchParams={searchParams} token={token} />
+      </Suspense>
+    </>
+  )
+}

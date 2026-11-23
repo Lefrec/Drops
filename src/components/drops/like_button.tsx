@@ -2,6 +2,7 @@
 
 import { useActionState, useOptimistic } from "react";
 import { toggleLike } from "@/app/drops/actions";
+import type { ActionState } from "@/lib/api/types"
 import { Button } from "@/components/ui/button"
 
 export function LikeButton({dropId, liked, likesCount}: {dropId: number, liked: boolean, likesCount: number}) {
@@ -13,7 +14,7 @@ export function LikeButton({dropId, liked, likesCount}: {dropId: number, liked: 
         })
     )
 
-    const [state, action, pending] = useActionState(async () => {
+    const [state, action, pending] = useActionState<ActionState, FormData>(async () => {
         setOptimisticLike(!liked)
         return toggleLike(dropId, liked)
     }, {})

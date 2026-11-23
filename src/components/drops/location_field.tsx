@@ -3,9 +3,9 @@
 import { useGeolocation } from "@/lib/use_geoloc"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 
-export function LocationField() {
+export function LocationField({ errors = {} }: { errors?: Record<string, string[]> }) {
     const { status, coords, locate } = useGeolocation()
     const [lat, setLat] = useState("47.49561")
     const [lng, setLng] = useState("6.80544")
@@ -29,7 +29,9 @@ export function LocationField() {
                     value={lat}
                     onChange={(e) => setLat(e.target.value)}
                     required
+                    aria-invalid={Boolean(errors.lat || errors.location)}
                 />
+                <FieldError>{errors.lat?.join(" ") || errors.location?.join(" ")}</FieldError>
             </Field>
             <Field>
                 <FieldLabel htmlFor="drop-longitude">Longitude</FieldLabel>
@@ -41,7 +43,9 @@ export function LocationField() {
                     value={lng}
                     onChange={(e) => setLng(e.target.value)}
                     required
+                    aria-invalid={Boolean(errors.lng || errors.location)}
                 />
+                <FieldError>{errors.lng?.join(" ")}</FieldError>
             </Field>
             <Button type="button" onClick={locate} disabled={status === "loading"}>
                 {status === "loading" ? "Localisation..." : "Utiliser ma position"}
