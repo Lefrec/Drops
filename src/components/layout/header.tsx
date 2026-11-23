@@ -29,7 +29,7 @@ export async function Header() {
       <Link className="site-header-brand" href="/drops">
         Drops
       </Link>
-      <OnlineIndicator/>
+      <OnlineIndicator userId={user?.id}/>
       <nav className="site-header-nav" aria-label="Navigation principale">
         <Link href="/status">Status</Link>
         {user ? (

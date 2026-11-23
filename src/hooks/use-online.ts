@@ -5,7 +5,7 @@ import { retain, subscribe } from '@/lib/realtime';
 import type { PublicUser } from "@/lib/api/types";
 
 export function useOnline() {
-    const [users, setUsers] = useState<PublicUser[]>([]);
+    const [users, setUsers] = useState<PublicUser[] | null>(null);
     useEffect(() => {
         const stopHello = subscribe("hello", (data) => {
             setUsers(Array.isArray(data.online) ? data.online : [])
