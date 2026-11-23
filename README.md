@@ -1,5 +1,11 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Project documentation
+
+- [WebSocket integration](WEBSOCKETS.md): realtime connection lifecycle, the viewer feature,
+  and patterns for adding future WebSocket features.
+- [Error handling](error-handling.md): API, session, action, form, and route error handling.
+
 ## Getting Started
 
 First, run the development server:

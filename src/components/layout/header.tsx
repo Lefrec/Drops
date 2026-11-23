@@ -5,6 +5,7 @@ import { getSessionToken } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { AccountMenu } from "./account_menu"
 import { LogoutButton } from "./logout_button"
+import { OnlineIndicator } from "./user_count"
 
 export async function Header() {
   const token = await getSessionToken()
@@ -28,6 +29,7 @@ export async function Header() {
       <Link className="site-header-brand" href="/drops">
         Drops
       </Link>
+      <OnlineIndicator userId={user?.id}/>
       <nav className="site-header-nav" aria-label="Navigation principale">
         <Link href="/status">Status</Link>
         {user ? (
