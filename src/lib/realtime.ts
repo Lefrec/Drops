@@ -23,7 +23,7 @@ async function connect() {
 if (socket || connecting || consumers === 0) return;
   connecting = true;
 try {
-    const res = await fetch('/api/realtime/ticket',
+    const res = await fetch(`/api/realtime/ticket`,
       { method: 'POST' });
 if (!res.ok) return;
 const { url } = await res.json();
@@ -53,6 +53,7 @@ if (socket === ws) socket = null;
     scheduleReconnect();
   };
 }
+
 function disconnect() {
   clearTimeout(reconnectTimer);
   reconnectTimer = undefined;
@@ -69,6 +70,7 @@ return () => {
     if (consumers === 0) closeTimer = setTimeout(disconnect, CLOSE_DELAY_MS);
   };
 }
+
 export function subscribe(type: string, listener: Listener) {
 if (!listeners.has(type)) listeners.set(type, new Set());
   listeners.get(type)!.add(listener);
@@ -76,6 +78,7 @@ return () => {
     listeners.get(type)?.delete(listener);
   };
 }
+
 export function onOpen(listener: () => void) {
   openListeners.add(listener);
 if (socket?.readyState === WebSocket.OPEN) listener();
@@ -83,6 +86,7 @@ return () => {
     openListeners.delete(listener);
   };
 }
+
 export function send(type: string, data: object = {}) {
 if (socket?.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type, data }));
 }

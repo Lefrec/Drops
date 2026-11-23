@@ -13,6 +13,7 @@ import { UserAvatar } from "@/components/users/user_avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
+import { PresenceWidget } from "@/components/drops/presence_widget"
 
 export default function DropPage({ params }: { params: Promise<{ id: string }> }) {
   return (
@@ -113,6 +114,7 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
         aria-label="Actions du drop"
         className="flex flex-wrap items-center justify-end gap-3 border-y border-border py-4"
       >
+        <PresenceWidget dropId={Number(id)}/>
         <LikeButton
           dropId={drop.id}
           liked={drop.likedByMe}
