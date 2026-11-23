@@ -3,6 +3,8 @@
 import { useActionState, useState } from "react"
 import { addComment } from "@/app/drops/actions";
 
+import { Button } from "@/components/ui/button"
+
 type CommentState = { error?: string }
 
 export function CommentButton({ dropId }: { dropId: number }) {
@@ -33,9 +35,7 @@ export function CommentButton({ dropId }: { dropId: number }) {
             placeholder="Écrire un commentaire..."
             required
           />
-          <button type="submit" disabled={pending}>
-            {pending ? "Envoi..." : "Envoyer"}
-          </button>
+          <Button type="submit" disabled={pending}>{pending ? "Envoi..." : "Envoyé"}</Button>
         </form>
       )}
       {isOpen && state.error && <p role="alert">{state.error}</p>}

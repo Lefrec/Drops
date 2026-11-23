@@ -2,8 +2,10 @@
 
 import { useActionState } from "react"
 import type { Category } from "@/lib/api/types"
-import { createDrop } from "../actions"
+import { createDrop } from "@/app/drops/actions"
 import { LocationField } from "./location_field"
+
+import { Button } from "@/components/ui/button"
 
 type FormState = { error?: string }
 
@@ -39,9 +41,7 @@ export function DropCreateForm({ categories }: { categories: Category[] }) {
       </label>
       <LocationField />
       {state.error && <p role="alert">{state.error}</p>}
-      <button type="submit" disabled={pending}>
-        {pending ? "Création..." : "Créer le drop"}
-      </button>
+      <Button type="submit" disabled={pending}>{pending ? "Création..." : "Créer le drop"}</Button>
     </form>
   )
 }
