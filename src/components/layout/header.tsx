@@ -42,7 +42,7 @@ export async function Header() {
             >
               Connexion
             </Button>
-            <Button nativeButton={false} render={<Link href="/auth/register" />}>
+            <Button nativeButton={false} render={<Link href="/auth/register" />} variant="ghost">
               Créer un compte
             </Button>
           </div>
