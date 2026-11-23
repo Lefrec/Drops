@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState, useRef } from "react"
-import { deleteDrop } from "./actions"
+import { deleteDrop } from "@/app/drops/actions";
 
 type FormState = { error?: string }
 

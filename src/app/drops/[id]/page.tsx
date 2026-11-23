@@ -3,10 +3,10 @@ import Link from "next/link"
 import { apiGet } from "@/lib/api/client"
 import type { CommentPage, Drop } from "@/lib/api/types"
 import { requireSession } from "@/lib/session"
-import { CommentItem } from "../comment_item"
-import { CommentButton } from "../comment_button"
-import { LikeButton } from "../like_button"
-import { DeleteDropButton } from "../delete_drop_button"
+import { CommentItem } from "@/components/comments/comment_item"
+import { CommentButton } from "@/components/comments/comment_button"
+import { LikeButton } from "@/components/drops/like_button"
+import { DeleteDropButton } from "@/components/drops/delete_drop_button"
 
 export default function DropPage({ params }: { params: Promise<{ id: string }> }) {
   return (
@@ -16,7 +16,7 @@ export default function DropPage({ params }: { params: Promise<{ id: string }> }
       </Suspense>
     </main>
   )
-}
+} 
 
 async function DropContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

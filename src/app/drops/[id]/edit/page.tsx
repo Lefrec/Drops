@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import { apiGet } from "@/lib/api/client"
 import type { Category, Drop } from "@/lib/api/types"
 import { requireSession } from "@/lib/session"
-import { DropEditForm } from "./drop_edit_form"
+import { DropEditForm } from "@/components/forms/drop_edit_form"
 
 export default function EditDropPage({ params }: { params: Promise<{ id: string }> }) {
   return (

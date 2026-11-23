@@ -1,13 +1,15 @@
-import { logout } from "@/lib/actions/auth"
-import { cookies } from "next/headers"
-import Link from "next/link"
+import { logout } from "@/lib/actions/auth";
+import { cookies } from "next/headers";
+import Link from "next/link";
 
 export async function Header() {
-  const isLoggedIn = Boolean((await cookies()).get("session")?.value)
+  const isLoggedIn = Boolean((await cookies()).get("session")?.value);
 
   return (
     <header className="site-header">
-      <Link className="site-header-brand" href="/drops">Drops</Link>
+      <Link className="site-header-brand" href="/drops">
+        Drops
+      </Link>
       <Link href="/status">Status</Link>
       <nav className="site-header-nav" aria-label="Navigation principale">
         <Link href="/auth/login">Connexion</Link>
@@ -19,5 +21,5 @@ export async function Header() {
         )}
       </nav>
     </header>
-  )
+  );
 }

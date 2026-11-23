@@ -1,8 +1,8 @@
-import { SearchBox } from "@/app/drops/searchbox"
-import { Categories } from "@/app/drops/categories"
+import { SearchBox } from "@/components/forms/searchbox"
+import { Categories } from "@/components/forms/categories"
 import { Suspense } from "react"
 import { SearchParams } from "next/dist/server/request/search-params"
-import { DropList } from "./drop_list"
+import { DropList } from "@/components/drops/drop_list"
 import Link from "next/link"
 
 export default function DropPage({searchParams}: {searchParams: Promise<SearchParams>}) {

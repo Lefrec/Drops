@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState, useState } from "react"
-import { addComment } from "./actions"
+import { addComment } from "@/app/drops/actions";
 
 type CommentState = { error?: string }
 
