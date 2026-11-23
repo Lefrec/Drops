@@ -169,6 +169,33 @@ Coordinate errors (type, boundaries, 3 km zone around the MMI department): alway
 - `POST /auth/login?ttl=<secondes>` (10 to 28800) : short duration token.
 - Demo account : `demo` / `drops2026` (other names : same password).
 
+#### WebSockets
+
+```
+interface Notification {
+kind: 'drop_opened' | 'drop_liked' | 'drop_commented';
+dropId: number; dropTitle: string; by: PublicUser; at: string;
+}
+type ClientMessage =
+| { type: 'presence:view'; data: { dropId: number } }
+| { type: 'presence:leave'; data: Record<string, never> }
+| { type: 'ping'; data: Record<string, never> };
+type ServerMessage =
+| { type: 'hello'; data: { user: PublicUser; serverTime: string; lockMode: 'on' | 'off'; online: PublicUser[] } }
+| { type: 'pong'; data: { serverTime: string } }
+| { type: 'presence:online'; data: { users: PublicUser[] } }
+| { type: 'presence:drop'; data: { dropId: number; viewers: PublicUser[] } }
+| { type: 'drop:created' | 'drop:updated'; data: { drop: Drop } }
+| { type: 'drop:deleted'; data: { dropId: number } }
+| { type: 'drop:opened'; data: { dropId: number; opensCount: number } }
+| { type: 'like:updated'; data: { dropId: number; likesCount: number } }
+| { type: 'comment:created'; data: { comment: Comment } }
+| { type: 'comment:deleted'; data: { dropId: number; commentId: number } }
+| { type: 'notification'; data: Notification }
+| { type: 'settings:updated'; data: { lockMode: 'on' | 'off' } }
+| { type: 'error'; data: { code: 'bad_message' | 'drop_not_found'; message: string } };
+```
+
 ## Commands
 
 - `npm run dev` runs a local dev build of the project

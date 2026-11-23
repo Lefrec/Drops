@@ -1,4 +1,4 @@
-import type { Viewer } from "@/hooks/use-presence";
+import type { Viewer } from "@/lib/api/types";
 import {
     Avatar,
     AvatarFallback,

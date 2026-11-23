@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { onOpen, retain, send, subscribe } from '@/lib/realtime';
-
-export type Viewer = { id: number; username: string; displayName: string; avatarUrl: string | null };
+import type { Viewer } from '@/lib/api/types';
 
 export function usePresence(dropId: number) {
     const [viewers, setViewers] = useState<Viewer[]>([]);

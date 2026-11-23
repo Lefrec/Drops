@@ -15,3 +15,6 @@ export type ActionState = {
   fields?: Record<string, string[]>
   success?: boolean
 }
+
+export type Viewer = { id: number; username: string; displayName: string; avatarUrl: string | null };
+export type PublicUser = S["PublicUser"];
