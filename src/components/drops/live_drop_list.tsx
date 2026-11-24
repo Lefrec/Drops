@@ -42,7 +42,6 @@ export function LiveDropList({
     if (!drops.some((drop) => drop.id === dropId)) return
 
     setDrops((current) => current.filter((drop) => drop.id !== dropId))
-    router.refresh()
   })
 
   if (drops.length === 0) {

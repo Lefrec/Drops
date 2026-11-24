@@ -157,7 +157,6 @@ export async function createDrop(formData: FormData): Promise<ActionState> {
         throw error
     }
 
-    refresh()
     return { success: true }
 }
 

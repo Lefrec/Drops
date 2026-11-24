@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect } from "react"
+import { useActionState } from "react"
 import { useRouter } from "next/navigation"
 import type { ActionState, Category } from "@/lib/api/types"
 import { createDrop } from "@/app/drops/actions"
@@ -20,26 +20,26 @@ import { toast } from "@/components/ui/toast"
 export function DropCreateForm({ categories }: { categories: Category[] }) {
   const router = useRouter()
   const [state, action, pending] = useActionState<ActionState | null, FormData>(
-    (_previousState, formData) => createDrop(formData),
+    async (_previousState, formData) => {
+      const result = await createDrop(formData)
+      if (result.error && !result.fields) {
+        toast.add({
+          title: "Erreur lors de la création du drop",
+          description: result.error,
+          type: "error",
+        })
+      } else if (result.success) {
+        toast.add({
+          title: "Drop créé",
+          description: "Votre drop a été publié.",
+          type: "success",
+        })
+        router.push("/drops")
+      }
+      return result
+    },
     null,
   )
-
-  useEffect(() => {
-    if (state?.error && !state.fields) {
-      toast.add({
-        title: "Erreur lors de la création du drop",
-        description: state.error,
-        type: "error",
-      })
-    } else if (state?.success) {
-      toast.add({
-        title: "Drop créé",
-        description: "Votre drop a été publié.",
-        type: "success",
-      })
-      router.push("/drops")
-    }
-  }, [router, state])
 
   return (
     <form action={action}>
