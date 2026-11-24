@@ -5,7 +5,7 @@ interface Props {
     drops: DropPage
     query: string
     category?: string 
-    setActive: any
+    setActive: (id: number) => void
 }
 
 export function DropList({ drops, query, category, setActive }: Props) {
