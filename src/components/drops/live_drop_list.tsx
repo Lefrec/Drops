@@ -11,6 +11,7 @@ interface Props {
   pageSize: number
   query: string
   category?: string
+  setActive: any
 }
 
 export function LiveDropList({
@@ -18,6 +19,7 @@ export function LiveDropList({
   pageSize,
   query,
   category,
+  setActive
 }: Props) {
   const [drops, setDrops] = useState(initialDrops)
   const router = useRouter()
@@ -57,7 +59,7 @@ export function LiveDropList({
   return (
     <ul>
       {drops.map((drop) => (
-        <li key={drop.id}>
+        <li key={drop.id} onMouseEnter={setActive(drop.id)} onFocus={() => setActive(drop.id)}>
           <DropCard drop={drop} />
         </li>
       ))}

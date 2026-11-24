@@ -5,8 +5,8 @@ import L, { LatLngExpression } from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { useEffect, useRef } from 'react'
 
-const NORMAL = { radius: 8, color: '#000000', weight: 2 }
-const ACTIVE = { radius: 12, color: '#000000', weight: 3 }
+const NORMAL = { radius: 8, color: '#3CB371', weight: 2 }
+const ACTIVE = { radius: 12, color: '#00FA9A', weight: 3 }
 
 interface Props {
     drops: DropPage

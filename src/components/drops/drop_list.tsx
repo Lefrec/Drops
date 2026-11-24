@@ -5,15 +5,17 @@ interface Props {
     drops: DropPage
     query: string
     category?: string 
+    setActive: any
 }
 
-export function DropList({ drops, query, category }: Props) {
+export function DropList({ drops, query, category, setActive }: Props) {
   return (
     <LiveDropList
       initialDrops={drops.items}
       pageSize={drops.pageSize}
       query={query}
       category={category}
+      setActive={setActive}
     />
   )
 }

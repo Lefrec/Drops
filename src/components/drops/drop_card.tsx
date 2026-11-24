@@ -14,7 +14,7 @@ export function DropCard({ drop }: { drop: Drop }) {
   return (
     <article id={`drop-${drop.id}`} className="flex flex-col gap-3">
       <Link className="block" href={`/drops/${drop.id}`}>
-        <Card>
+        <Card>              
           
           <CardHeader>
         <UserAvatar
