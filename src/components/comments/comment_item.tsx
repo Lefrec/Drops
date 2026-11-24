@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState } from "react"
 import type { ActionState, Comment } from "@/lib/api/types"
 import { UserAvatar } from "@/components/users/user_avatar"
 import { DeleteCommentButton } from "@/components/comments/delete_comment_button"
-import { CommentReactionButtons } from "@/components/comments/comment_reaction_buttons"
+import { ReactionButtons } from "@/components/likes/reaction_buttons"
 import { addComment, getCommentReplies } from "@/app/drops/actions"
 import { useRealtimeEvent } from "@/hooks/user-realtime-event"
 import { Button } from "@/components/ui/button"
@@ -137,8 +137,9 @@ export function CommentItem({ comment, isReply = false }: Props) {
 
           {!localComment.deleted && (
             <div className="mt-2 flex flex-wrap items-center gap-2">
-              <CommentReactionButtons
-                commentId={localComment.id}
+              <ReactionButtons
+                type="comment"
+                id={localComment.id}
                 liked={localComment.likedByMe}
                 disliked={localComment.dislikedByMe}
                 likesCount={localComment.likesCount}
