@@ -1,22 +1,36 @@
 'use client'
 
-import { useActionState, useOptimistic } from "react";
+import { useActionState, useEffect, useOptimistic, useState } from "react";
 import { toggleLike } from "@/app/drops/actions";
-import type { ActionState } from "@/lib/api/types"
 import { Button } from "@/components/ui/button"
+import { useRealtimeEvent } from "@/hooks/user-realtime-event";
+import type { ActionState } from "@/lib/api/types"
 
 export function LikeButton({dropId, liked, likesCount}: {dropId: number, liked: boolean, likesCount: number}) {
-    const [optimisticLike, setOptimisticLike] = useOptimistic(
-        { liked, likesCount },
-        (current, nextLiked: boolean) => ({
-            liked: nextLiked,
-            likesCount: current.likesCount + (nextLiked ? 1 : -1),
-        })
-    )
+    const [serverLike, setServerLike] = useState({ liked, likesCount})
+
+    useEffect(() => {
+        setServerLike({ liked, likesCount })
+    }, [liked, likesCount])
+
+    useRealtimeEvent<{ dropId: number; likesCount: number }>('like:updated', (data) => {
+        if (data.dropId !== dropId) return
+        setServerLike((current) => ({...current, likesCount: data.likesCount}))
+    })
+
+    const [optimisticLike, setOptimisticLike] = useOptimistic(serverLike)
 
     const [state, action, pending] = useActionState<ActionState, FormData>(async () => {
-        setOptimisticLike(!liked)
-        return toggleLike(dropId, liked)
+        const nextLiked = !serverLike.liked
+        setOptimisticLike({
+            liked: nextLiked,
+            likesCount: serverLike.likesCount + (nextLiked ? 1 : -1),
+        })
+        const result = await toggleLike(dropId, serverLike.liked)
+        if (!result.error) {
+            setServerLike((current) => ({...current, liked: nextLiked}))
+        }
+        return result
     }, {})
 
     return (
