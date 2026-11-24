@@ -114,6 +114,7 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
         <h2 id="drop-location-heading" className="text-xl font-semibold">Emplacement</h2>
         <LocationMap
           location={drop.location}
+          interactive
           className="h-80 w-full overflow-hidden rounded-md border border-border"
         />
       </section>

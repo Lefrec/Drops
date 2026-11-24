@@ -52,7 +52,7 @@ export default function LocationMapView({
     }).addTo(map)
 
     const marker = L.circleMarker([location.lat, location.lng], MARKER_STYLE).addTo(map)
-    if (interactive) {
+    if (interactive && onLocationChangeRef.current) {
       map.on("click", (event) => {
         const nextLocation = { lat: event.latlng.lat, lng: event.latlng.lng }
         marker.setLatLng(event.latlng)
@@ -87,7 +87,7 @@ export default function LocationMapView({
     <div
       ref={container}
       className={`relative z-0 isolate ${className ?? ""}`}
-      role="img"
+      role={interactive ? "region" : "img"}
       aria-label="Carte indiquant l’emplacement du drop"
     />
   )
