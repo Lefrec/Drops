@@ -75,6 +75,8 @@ export async function updateDrop(dropId: number, formData: FormData): Promise<Ac
     const content = formData.get("content")
     const category = formData.get("category")
     const imageUrl = formData.get("imageUrl")
+    const lat = formData.get("lat")
+    const lng = formData.get("lng")
 
     if (typeof title !== "string" || !title.trim()) {
         return { error: "Le titre est obligatoire.", fields: { title: ["Ce champ est obligatoire."] } }
@@ -91,6 +93,21 @@ export async function updateDrop(dropId: number, formData: FormData): Promise<Ac
     if (category === "photo" && !imageUrl.trim()) {
         return { error: "Une URL d’image est obligatoire pour la catégorie photo.", fields: { imageUrl: ["Ce champ est obligatoire pour la catégorie photo."] } }
     }
+    if (
+        typeof lat !== "string" ||
+        !lat.trim() ||
+        !Number.isFinite(Number(lat)) ||
+        Math.abs(Number(lat)) > 90 ||
+        typeof lng !== "string" ||
+        !lng.trim() ||
+        !Number.isFinite(Number(lng)) ||
+        Math.abs(Number(lng)) > 180
+    ) {
+        return {
+            error: "L’emplacement est invalide.",
+            fields: { location: ["Saisissez une latitude et une longitude valides."] },
+        }
+    }
 
     try {
         await apiPatch(`/drops/${dropId}`, token, {
@@ -98,6 +115,8 @@ export async function updateDrop(dropId: number, formData: FormData): Promise<Ac
             content: content.trim(),
             category,
             imageUrl: imageUrl.trim() || null,
+            lat: Number(lat),
+            lng: Number(lng),
         })
     } catch (error) {
         const actionError = toActionError(error)

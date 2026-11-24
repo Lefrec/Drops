@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
 import { PresenceWidget } from "@/components/drops/presence_widget"
+import { LocationMap } from "@/components/map/location_map"
 
 export default function DropPage({ params }: { params: Promise<{ id: string }> }) {
   return (
@@ -108,6 +109,15 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
           </p>
         </CardContent>
       </Card>
+
+      <section aria-labelledby="drop-location-heading" className="flex flex-col gap-3">
+        <h2 id="drop-location-heading" className="text-xl font-semibold">Emplacement</h2>
+        <LocationMap
+          location={drop.location}
+          interactive
+          className="h-80 w-full overflow-hidden rounded-md border border-border"
+        />
+      </section>
 
       <div
         role="group"

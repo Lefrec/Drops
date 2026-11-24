@@ -10,15 +10,17 @@ type CommentsState = {
   total: number
 }
 
+interface Props {
+  dropId: number
+  initialComments: Comment[]
+  initialTotal: number
+}
+
 export function LiveCommentList({
   dropId,
   initialComments,
   initialTotal,
-}: {
-  dropId: number
-  initialComments: Comment[]
-  initialTotal: number
-}) {
+}: Props) {
   const [comments, setComments] = useState<CommentsState>({
     items: initialComments,
     total: initialTotal,

@@ -1,11 +1,15 @@
+import Link from "next/link"
+import { SearchParams } from "next/dist/server/request/search-params"
+import { Suspense } from "react"
+
+import { getSessionToken } from "@/lib/session"
+import { apiGet } from "@/lib/api/client"
+import type { DropPage } from "@/lib/api/types"
+
 import { SearchBox } from "@/components/search/searchbox"
 import { Categories } from "@/components/search/categories"
-import { Suspense } from "react"
-import { SearchParams } from "next/dist/server/request/search-params"
-import { DropList } from "@/components/drops/drop_list"
-import Link from "next/link"
-import { getSessionToken } from "@/lib/session"
 import { LoginRequired } from "@/components/auth/login_required"
+import { DropsExplorer } from "@/components/drops/drops_explorer"
 
 export default function DropPage({searchParams}: {searchParams: Promise<SearchParams>}) {
   return (
@@ -27,6 +31,17 @@ async function DropsContent({ searchParams }: { searchParams: Promise<SearchPara
   const token = await getSessionToken()
   if (!token) return <LoginRequired action="consulter les drops" />
 
+  const params = await searchParams
+  const apiParams = new URLSearchParams()
+  const query = typeof params.q === "string" ? params.q.trim() : ""
+  const category = typeof params.category === "string" ? params.category : undefined
+  
+  if (query) apiParams.set("q", query)
+  if (category) apiParams.set("category", category)
+  
+  const apiQuery = apiParams.toString()
+  const drops = await apiGet<DropPage>(`/drops${apiQuery ? `?${apiQuery}` : ""}`, token)
+
   return (
     <>
       <Suspense fallback={null}>
@@ -36,7 +51,7 @@ async function DropsContent({ searchParams }: { searchParams: Promise<SearchPara
         </nav>
       </Suspense>
       <Suspense fallback={<p>Chargement des drops...</p>}>
-        <DropList searchParams={searchParams} token={token} />
+        <DropsExplorer drops={drops} query={query} category={category}/>
       </Suspense>
     </>
   )
