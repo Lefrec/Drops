@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+
 type Listener = (data: any) => void;
 
 const NO_RECONNECT = [4001, 4008, 4009];
@@ -48,7 +50,8 @@ const message = JSON.parse(event.data);
     listeners.get(message.type)?.forEach((listener) => listener(message.data));
   };
   ws.onclose = (event) => {
-if (socket === ws) socket = null;
+    if (socket === ws) socket = null;
+    if (event.code === 4001) redirect('/auth/login')
     if (consumers === 0 || NO_RECONNECT.includes(event.code)) return;
     scheduleReconnect();
   };
