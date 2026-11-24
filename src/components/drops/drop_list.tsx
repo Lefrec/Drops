@@ -1,7 +1,7 @@
 import { apiGet } from "@/lib/api/client"
 import { DropPage } from "@/lib/api/types"
 import { SearchParams } from "next/dist/server/request/search-params"
-import { DropCard } from "./drop_card"
+import { LiveDropList } from "./live_drop_list"
 
 export async function DropList({
   searchParams,
@@ -12,28 +12,21 @@ export async function DropList({
 }) {
   const params = await searchParams
   const apiParams = new URLSearchParams()
+  const query = typeof params.q === "string" ? params.q.trim() : ""
+  const category = typeof params.category === "string" ? params.category : undefined
 
-  if (typeof params.q === "string" && params.q.trim()) {
-    apiParams.set("q", params.q.trim())
-  }
-  if (typeof params.category === "string") {
-    apiParams.set("category", params.category)
-  }
+  if (query) apiParams.set("q", query)
+  if (category) apiParams.set("category", category)
 
-  const query = apiParams.toString()
-  const drops = await apiGet<DropPage>(`/drops${query ? `?${query}` : ""}`, token)
-
-  if (drops.items.length === 0) {
-    return <p>Aucun drop trouvé.</p>
-  }
+  const apiQuery = apiParams.toString()
+  const drops = await apiGet<DropPage>(`/drops${apiQuery ? `?${apiQuery}` : ""}`, token)
 
   return (
-    <ul>
-      {drops.items.map((drop) => (
-        <li key={drop.id}>
-          <DropCard drop={drop}/>
-        </li>
-      ))}
-    </ul>
+    <LiveDropList
+      initialDrops={drops.items}
+      pageSize={drops.pageSize}
+      query={query}
+      category={category}
+    />
   )
 }
