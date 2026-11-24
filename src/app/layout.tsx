@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";
 import { Header } from "@/components/layout/header";
 import { Toaster } from "@/components/ui/toast"; 
+import { Notification } from "@/components/notification";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </Suspense>
         {children}
         <Toaster/>
+        <Notification/>
       </body>
     </html>
   );

@@ -5,7 +5,7 @@ import { getSessionToken } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { AccountMenu } from "./account_menu"
 import { LogoutButton } from "./logout_button"
-import { OnlineIndicator } from "./user_count"
+import { OnlineIndicator } from "../user_count"
 
 export async function Header() {
   const token = await getSessionToken()
