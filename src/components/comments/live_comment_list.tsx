@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import { CommentItem } from "@/components/comments/comment_item"
+import { toast } from "@/components/ui/toast"
 import { useRealtimeEvent } from "@/hooks/user-realtime-event"
 import type { Comment } from "@/lib/api/types"
 
@@ -28,6 +29,7 @@ export function LiveCommentList({
   const initialStateKey = JSON.stringify({ dropId, initialComments, initialTotal })
   const appliedInitialStateKey = useRef(initialStateKey)
   const deletedCommentIds = useRef(new Set<number>())
+  const notifiedReplyIds = useRef(new Set<number>())
 
   useEffect(() => {
     if (appliedInitialStateKey.current === initialStateKey) return
@@ -37,6 +39,26 @@ export function LiveCommentList({
 
   useRealtimeEvent<{ comment: Comment }>("comment:created", ({ comment }) => {
     if (comment.dropId !== dropId) return
+    if (comment.parentId !== null) {
+      const parent = comments.items.find((item) => item.id === comment.parentId)
+      if (parent?.isMine && !comment.isMine && !notifiedReplyIds.current.has(comment.id)) {
+        notifiedReplyIds.current.add(comment.id)
+        toast.add({
+          title: "Nouvelle réponse",
+          description: `${comment.author.displayName} a répondu à votre commentaire.`,
+          type: "info",
+        })
+      }
+      setComments((current) => ({
+        ...current,
+        items: current.items.map((item) =>
+          item.id === comment.parentId
+            ? { ...item, repliesCount: item.repliesCount + 1 }
+            : item
+        ),
+      }))
+      return
+    }
 
     setComments((current) => {
       if (current.items.some((item) => item.id === comment.id)) return current
@@ -47,14 +69,49 @@ export function LiveCommentList({
     })
   })
 
+  useRealtimeEvent<{ comment: Comment }>("comment:updated", ({ comment }) => {
+    if (comment.dropId !== dropId) return
+    setComments((current) => ({
+      ...current,
+      items: current.items.map((item) => item.id === comment.id ? comment : item),
+    }))
+  })
+
   useRealtimeEvent<{ dropId: number; commentId: number }>("comment:deleted", (data) => {
     if (data.dropId !== dropId || deletedCommentIds.current.has(data.commentId)) return
 
     deletedCommentIds.current.add(data.commentId)
-    setComments((current) => ({
-      items: current.items.filter((comment) => comment.id !== data.commentId),
-      total: Math.max(0, current.total - 1),
-    }))
+    setComments((current) => {
+      const root = current.items.find((comment) => comment.id === data.commentId)
+      if (root) {
+        if (root.repliesCount > 0) {
+          return {
+            ...current,
+            items: current.items.map((comment) =>
+              comment.id === data.commentId
+                ? {
+                    ...comment,
+                    deleted: true,
+                    content: "",
+                    isMine: false,
+                    author: {
+                      id: 0,
+                      username: "deleted",
+                      displayName: "Commentaire supprimé",
+                      avatarUrl: null,
+                    },
+                  }
+                : comment
+            ),
+          }
+        }
+        return {
+          items: current.items.filter((comment) => comment.id !== data.commentId),
+          total: Math.max(0, current.total - 1),
+        }
+      }
+      return current
+    })
   })
 
   return (

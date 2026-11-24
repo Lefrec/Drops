@@ -35,6 +35,8 @@ Websocket specific documentation is at `drops-api-production.up.railway.app/ws-d
 
 OpenAPI specification is at `drops-api-production.up.railway.app/openapi.json`.
 
+The API has been updated, see changelog at [Drops_API\_\_\_changelog.md](./Drops_API___changelog.md)
+
 ### API Contract
 
 JSON, camelCase, dates ISO 8601 UTC, ids full. Auth : `Authorization: Bearer <token>` (no cookie).
@@ -69,15 +71,14 @@ interface Drop {
   content: string | null;
   category: Category;
   imageUrl: string | null;
-  location: { lat: number; lng: number; precision: "exact" | "approx" };
-  locked: boolean;
+  location: { lat: number; lng: number };
   hidden: boolean;
   author: PublicUser;
   likesCount: number;
+  dislikesCount: number;
   commentsCount: number;
-  opensCount: number;
   likedByMe: boolean;
-  openedByMe: boolean;
+  dislikedByMe: boolean;
   isMine: boolean;
   createdAt: string;
   updatedAt: string;
@@ -85,9 +86,16 @@ interface Drop {
 interface Comment {
   id: number;
   dropId: number;
+  parentId: number | null;
   content: string;
   author: PublicUser;
   isMine: boolean;
+  deleted: boolean;
+  repliesCount: number;
+  likesCount: number;
+  dislikesCount: number;
+  likedByMe: boolean;
+  dislikedByMe: boolean;
   createdAt: string;
 }
 interface CategoryItem {
@@ -118,7 +126,7 @@ interface ApiError {
 }
 ```
 
-`likedByMe`, `openedByMe`, `isMine` are `false` without token. `hidden` is only `true` for the author.
+`likedByMe`, `dislikedByMe` and `isMine` sont `false` sans token. `hidden` n'est `true` que pour l'auteur.
 Pagination : `?page=1` (≥1), `?pageSize=20` (1 to 50). Page after end : 200 with `items: []`.
 
 #### Routes
@@ -145,8 +153,15 @@ PATCH  /drops/{id}                  token       200 | 400,401,403,404,422,429,50
 DELETE /drops/{id}                  token|admin 204 | 401,403,404,429,500
 POST   /drops/{id}/like             token       200 | 401,404,429,500
 DELETE /drops/{id}/like             token       200 | 401,404,429,500
+POST   /drops/{id}/dislike          token       200 | 401,404,429,500
+DELETE /drops/{id}/dislike          token       200 | 401,404,429,500
 GET    /drops/{id}/comments         token?      200 | 401,404,422,429,500
 POST   /drops/{id}/comments         token       201 | 400,401,404,422,429,500
+GET    /comments/{id}/replies       token?      200 | 401,404,422,429,500
+POST   /comments/{id}/like          token       200 | 401,404,429,500
+DELETE /comments/{id}/like          token       200 | 401,404,429,500
+POST   /comments/{id}/dislike       token       200 | 401,404,429,500
+DELETE /comments/{id}/dislike       token       200 | 401,404,429,500
 DELETE /comments/{id}               token       204 | 401,403,404,429,500
 POST   /drops/{id}/report           token       202 | 400,401,403,404,422,429,500
 POST   /admin/reset                 admin       200 | 400,403,422,500
@@ -175,7 +190,7 @@ Coordinate errors (type, boundaries, 3 km zone around the MMI department): alway
 
 ```
 interface Notification {
-kind: 'drop_opened' | 'drop_liked' | 'drop_commented';
+kind: 'drop_liked' | 'drop_commented';
 dropId: number; dropTitle: string; by: PublicUser; at: string;
 }
 type ClientMessage =
@@ -183,18 +198,16 @@ type ClientMessage =
 | { type: 'presence:leave'; data: Record<string, never> }
 | { type: 'ping'; data: Record<string, never> };
 type ServerMessage =
-| { type: 'hello'; data: { user: PublicUser; serverTime: string; lockMode: 'on' | 'off'; online: PublicUser[] } }
+| { type: 'hello'; data: { user: PublicUser; serverTime: string; online: PublicUser[] } }
 | { type: 'pong'; data: { serverTime: string } }
 | { type: 'presence:online'; data: { users: PublicUser[] } }
 | { type: 'presence:drop'; data: { dropId: number; viewers: PublicUser[] } }
 | { type: 'drop:created' | 'drop:updated'; data: { drop: Drop } }
 | { type: 'drop:deleted'; data: { dropId: number } }
-| { type: 'drop:opened'; data: { dropId: number; opensCount: number } }
-| { type: 'like:updated'; data: { dropId: number; likesCount: number } }
-| { type: 'comment:created'; data: { comment: Comment } }
+| { type: 'like:updated'; data: { dropId: number; likesCount: number; dislikesCount: number } }
+| { type: 'comment:created' | 'comment:updated'; data: { comment: Comment } }
 | { type: 'comment:deleted'; data: { dropId: number; commentId: number } }
 | { type: 'notification'; data: Notification }
-| { type: 'settings:updated'; data: { lockMode: 'on' | 'off' } }
 | { type: 'error'; data: { code: 'bad_message' | 'drop_not_found'; message: string } };
 ```
 

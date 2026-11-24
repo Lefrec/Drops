@@ -40,7 +40,7 @@ export function DropCard({ drop }: { drop: Drop }) {
             />
           )}
           <CardFooter className="justify-between">
-            <p>{drop.likesCount} j'aime</p>
+            <p>{drop.likesCount} j'aime · {drop.dislikesCount} je n'aime pas</p>
             <p>{drop.commentsCount} commentaires</p>
           </CardFooter>
         </Card>

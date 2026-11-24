@@ -6,7 +6,7 @@ import { getSessionToken } from "@/lib/session"
 import { LoginRequired } from "@/components/auth/login_required"
 import { LiveCommentList } from "@/components/comments/live_comment_list"
 import { CommentButton } from "@/components/comments/comment_button"
-import { LikeButton } from "@/components/drops/like_button"
+import { ReactionButtons } from "@/components/likes/reaction_buttons"
 import { DeleteDropButton } from "@/components/drops/delete_drop_button"
 import { DropEditForm } from "@/components/drops/drop_edit_form"
 import { UserAvatar } from "@/components/users/user_avatar"
@@ -125,10 +125,13 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
         className="flex flex-wrap items-center justify-end gap-3 border-y border-border py-4"
       >
         <PresenceWidget dropId={Number(id)}/>
-        <LikeButton
-          dropId={drop.id}
+        <ReactionButtons
+          type="drop"
+          id={drop.id}
           liked={drop.likedByMe}
+          disliked={drop.dislikedByMe}
           likesCount={drop.likesCount}
+          dislikesCount={drop.dislikesCount}
         />
         <CommentButton dropId={drop.id} />
       </div>
