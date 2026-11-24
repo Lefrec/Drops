@@ -4,6 +4,7 @@ import { useActionState, useEffect, useState } from "react"
 import type { ActionState, Category, Drop } from "@/lib/api/types"
 import { updateDrop } from "@/app/drops/actions"
 import { toast } from "@/components/ui/toast"
+import { LocationField } from "./location_field"
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import {
@@ -70,7 +71,7 @@ export function DropEditForm({ drop, categories }: { drop: Drop; categories: Cat
       <DialogTrigger render={<Button type="button" />}>
         Modifier mon drop
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Modifier mon drop</DialogTitle>
           <DialogDescription>
@@ -141,6 +142,14 @@ export function DropEditForm({ drop, categories }: { drop: Drop; categories: Cat
               <FieldDescription>Obligatoire pour la catégorie photo.</FieldDescription>
               <FieldError>{currentState?.fields?.imageUrl?.join(" ")}</FieldError>
             </Field>
+            <LocationField
+              key={formKey}
+              initialLocation={drop.location}
+              idPrefix={`edit-drop-${drop.id}`}
+              mapClassName="h-36 w-full overflow-hidden rounded-md border border-border"
+              showLocateButton={false}
+              errors={currentState?.fields}
+            />
             <DialogFooter>
               <DialogClose
                 render={<Button type="button" variant="outline" disabled={pending} />}
