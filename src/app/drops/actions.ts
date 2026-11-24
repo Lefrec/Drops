@@ -1,6 +1,6 @@
 'use server'
 
-import { apiDelete, apiPatch, apiPost, toActionError } from "@/lib/api/client"
+import { apiGet, apiDelete, apiPatch, apiPost, toActionError } from "@/lib/api/client"
 import type { ActionState } from "@/lib/api/types"
 import { getSessionToken } from "@/lib/session"
 import { refresh } from "next/cache"

@@ -56,14 +56,6 @@ export function CommentReactionButtons({
         : serverState.dislikesCount,
     })
     const result = await toggleCommentLike(commentId, serverState.liked)
-    if (!result.error) {
-      setServerState((current) => ({
-        liked: nextLiked,
-        disliked: nextLiked ? false : current.disliked,
-        likesCount: current.likesCount + (nextLiked ? 1 : -1),
-        dislikesCount: nextLiked && current.disliked ? current.dislikesCount - 1 : current.dislikesCount,
-      }))
-    }
     return result
   }, {})
 
@@ -79,14 +71,6 @@ export function CommentReactionButtons({
         : serverState.likesCount,
     })
     const result = await toggleCommentDislike(commentId, serverState.disliked)
-    if (!result.error) {
-      setServerState((current) => ({
-        disliked: nextDisliked,
-        liked: nextDisliked ? false : current.liked,
-        dislikesCount: current.dislikesCount + (nextDisliked ? 1 : -1),
-        likesCount: nextDisliked && current.liked ? current.likesCount - 1 : current.likesCount,
-      }))
-    }
     return result
   }, {})
 

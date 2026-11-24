@@ -48,15 +48,6 @@ export function LikeButton({
                 : serverLike.dislikesCount,
         })
         const result = await toggleLike(dropId, serverLike.liked)
-        if (!result.error) {
-            setServerLike((current) => ({
-                ...current,
-                liked: nextLiked,
-                disliked: nextLiked ? false : current.disliked,
-                likesCount: current.likesCount + (nextLiked ? 1 : -1),
-                dislikesCount: nextLiked && current.disliked ? current.dislikesCount - 1 : current.dislikesCount,
-            }))
-        }
         return result
     }, {})
 
@@ -72,15 +63,6 @@ export function LikeButton({
                 : serverLike.likesCount,
         })
         const result = await toggleDislike(dropId, serverLike.disliked)
-        if (!result.error) {
-            setServerLike((current) => ({
-                ...current,
-                disliked: nextDisliked,
-                liked: nextDisliked ? false : current.liked,
-                dislikesCount: current.dislikesCount + (nextDisliked ? 1 : -1),
-                likesCount: nextDisliked && current.liked ? current.likesCount - 1 : current.likesCount,
-            }))
-        }
         return result
     }, {})
 
