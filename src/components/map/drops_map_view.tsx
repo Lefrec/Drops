@@ -10,8 +10,8 @@ const ACTIVE = { radius: 12, color: '#00FA9A', weight: 3 }
 
 interface Props {
     drops: DropPage
-    activeId: number
-    onSelect: any
+    activeId: number | null
+    onSelect: (id: number) => void
 }
 
 export default function DropsMapView({ drops, activeId, onSelect }: Props) {
