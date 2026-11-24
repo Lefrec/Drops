@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { DropCard } from "@/components/drops/drop_card"
 import { useRealtimeEvent } from "@/hooks/user-realtime-event"
@@ -19,10 +19,14 @@ export function LiveDropList({
 }) {
   const [drops, setDrops] = useState(initialDrops)
   const router = useRouter()
+  const initialStateKey = JSON.stringify({ initialDrops, pageSize, query, category })
+  const appliedInitialStateKey = useRef(initialStateKey)
 
   useEffect(() => {
+    if (appliedInitialStateKey.current === initialStateKey) return
+    appliedInitialStateKey.current = initialStateKey
     setDrops(initialDrops)
-  }, [initialDrops])
+  }, [initialDrops, initialStateKey])
 
   useRealtimeEvent<{ drop: Drop }>("drop:created", ({ drop }) => {
     if (drop.hidden || (category && drop.category !== category)) return

@@ -23,11 +23,15 @@ export function LiveCommentList({
     items: initialComments,
     total: initialTotal,
   })
+  const initialStateKey = JSON.stringify({ dropId, initialComments, initialTotal })
+  const appliedInitialStateKey = useRef(initialStateKey)
   const deletedCommentIds = useRef(new Set<number>())
 
   useEffect(() => {
+    if (appliedInitialStateKey.current === initialStateKey) return
+    appliedInitialStateKey.current = initialStateKey
     setComments({ items: initialComments, total: initialTotal })
-  }, [initialComments, initialTotal])
+  }, [initialComments, initialStateKey, initialTotal])
 
   useRealtimeEvent<{ comment: Comment }>("comment:created", ({ comment }) => {
     if (comment.dropId !== dropId) return
