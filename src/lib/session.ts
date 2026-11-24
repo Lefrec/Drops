@@ -1,4 +1,7 @@
+import 'server-only'
 import { cookies } from "next/headers";
+import { ApiError, apiGet } from "@/lib/api/client"
+import type { PrivateUser } from "@/lib/api/types"
 
 export async function setSession(token?: string) {
     if (token) {
@@ -16,5 +19,13 @@ export async function setSession(token?: string) {
 
 export async function getSessionToken() {
     const token = (await cookies()).get('session')?.value
-    return token ?? null
+    if (!token) return null
+
+    try {
+        await apiGet<PrivateUser>("/auth/me", token)
+        return token
+    } catch (error) {
+        if (error instanceof ApiError && error.status === 401) return null
+        throw error
+    }
 }
