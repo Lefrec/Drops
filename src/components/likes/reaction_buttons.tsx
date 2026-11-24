@@ -8,6 +8,7 @@ import {
   toggleLike,
 } from "@/app/drops/actions"
 import { Button } from "@/components/ui/button"
+import { toast } from "@/components/ui/toast"
 import { useRealtimeEvent } from "@/hooks/user-realtime-event"
 import type { ActionState, Comment } from "@/lib/api/types"
 
@@ -98,9 +99,21 @@ export function ReactionButtons({
           ? serverState.likesCount - 1
           : serverState.likesCount,
       })
-      return type === "drop"
+      const result = await (type === "drop"
         ? toggleDislike(id, serverState.disliked)
-        : toggleCommentDislike(id, serverState.disliked)
+        : toggleCommentDislike(id, serverState.disliked))
+
+      if (!result.error) {
+        toast.add({
+          title: nextDisliked ? "Réaction ajoutée" : "Réaction retirée",
+          description: nextDisliked
+            ? `Vous n’aimez pas ${type === "drop" ? "ce drop" : "ce commentaire"}.`
+            : "Votre réaction négative a été retirée.",
+          type: "info",
+        })
+      }
+
+      return result
     },
     {},
   )
