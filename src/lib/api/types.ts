@@ -18,3 +18,10 @@ export type ActionState = {
 
 export type Viewer = { id: number; username: string; displayName: string; avatarUrl: string | null };
 export type PublicUser = S["PublicUser"];
+export type Notification = {
+  kind: string; 
+  dropId: number; 
+  dropTitle: string; 
+  at: Date;
+  by: Viewer;
+}

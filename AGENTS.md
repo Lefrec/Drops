@@ -31,6 +31,8 @@ The API is accessed at `drops-api-production.up.railway.app`.
 
 Documentation for it is readable at `drops-api-production.up.railway.app/docs`.
 
+Websocket specific documentation is at `drops-api-production.up.railway.app/ws-docs`.
+
 OpenAPI specification is at `drops-api-production.up.railway.app/openapi.json`.
 
 ### API Contract
