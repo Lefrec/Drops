@@ -48,6 +48,25 @@ export async function addComment(dropId: number, formData: FormData): Promise<Ac
     return { success: true }
 }
 
+export async function deleteComment(commentId: number): Promise<ActionState> {
+    const token = await getSessionToken()
+    if (!token) return { error: loginRequiredError }
+    if (!Number.isSafeInteger(commentId) || commentId < 1) {
+        return { error: "L’identifiant du commentaire est invalide." }
+    }
+
+    try {
+        await apiDelete(`/comments/${commentId}`, token)
+    } catch (error) {
+        const actionError = toActionError(error)
+        if (actionError) return actionError
+        throw error
+    }
+
+    refresh()
+    return { success: true }
+}
+
 export async function updateDrop(dropId: number, formData: FormData): Promise<ActionState> {
     const token = await getSessionToken()
     if (!token) return { error: loginRequiredError }
