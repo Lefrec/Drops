@@ -3,6 +3,12 @@
 import { useOnline } from "@/hooks/use-online";
 
 export function OnlineIndicator({ userId }: { userId?: number }) {
+  if (userId === undefined) return null
+
+  return <AuthenticatedOnlineIndicator key={userId} userId={userId} />
+}
+
+function AuthenticatedOnlineIndicator({ userId }: { userId: number }) {
   const users = useOnline();
 
   if (users === null) {
@@ -21,12 +27,9 @@ export function OnlineIndicator({ userId }: { userId?: number }) {
     );
   }
 
-  const otherUsers = userId
-    ? users.filter((onlineUser) => onlineUser.id !== userId)
-    : users;
+  const otherUsers = users.filter((onlineUser) => onlineUser.id !== userId);
   const hasOtherUsers = otherUsers.length > 0;
-  const isOnlyOneOnline = userId !== undefined && users.length === 1 &&
-    users[0].id === userId;
+  const isOnlyOneOnline = users.length === 1 && users[0].id === userId;
 
   let label: string;
   if (isOnlyOneOnline) {
