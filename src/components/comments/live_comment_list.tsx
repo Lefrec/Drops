@@ -37,6 +37,17 @@ export function LiveCommentList({
 
   useRealtimeEvent<{ comment: Comment }>("comment:created", ({ comment }) => {
     if (comment.dropId !== dropId) return
+    if (comment.parentId !== null) {
+      setComments((current) => ({
+        ...current,
+        items: current.items.map((item) =>
+          item.id === comment.parentId
+            ? { ...item, repliesCount: item.repliesCount + 1 }
+            : item
+        ),
+      }))
+      return
+    }
 
     setComments((current) => {
       if (current.items.some((item) => item.id === comment.id)) return current
@@ -47,14 +58,49 @@ export function LiveCommentList({
     })
   })
 
+  useRealtimeEvent<{ comment: Comment }>("comment:updated", ({ comment }) => {
+    if (comment.dropId !== dropId) return
+    setComments((current) => ({
+      ...current,
+      items: current.items.map((item) => item.id === comment.id ? comment : item),
+    }))
+  })
+
   useRealtimeEvent<{ dropId: number; commentId: number }>("comment:deleted", (data) => {
     if (data.dropId !== dropId || deletedCommentIds.current.has(data.commentId)) return
 
     deletedCommentIds.current.add(data.commentId)
-    setComments((current) => ({
-      items: current.items.filter((comment) => comment.id !== data.commentId),
-      total: Math.max(0, current.total - 1),
-    }))
+    setComments((current) => {
+      const root = current.items.find((comment) => comment.id === data.commentId)
+      if (root) {
+        if (root.repliesCount > 0) {
+          return {
+            ...current,
+            items: current.items.map((comment) =>
+              comment.id === data.commentId
+                ? {
+                    ...comment,
+                    deleted: true,
+                    content: "",
+                    isMine: false,
+                    author: {
+                      id: 0,
+                      username: "deleted",
+                      displayName: "Commentaire supprimé",
+                      avatarUrl: null,
+                    },
+                  }
+                : comment
+            ),
+          }
+        }
+        return {
+          items: current.items.filter((comment) => comment.id !== data.commentId),
+          total: Math.max(0, current.total - 1),
+        }
+      }
+      return current
+    })
   })
 
   return (

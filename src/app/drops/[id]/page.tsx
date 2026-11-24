@@ -128,7 +128,9 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
         <LikeButton
           dropId={drop.id}
           liked={drop.likedByMe}
+          disliked={drop.dislikedByMe}
           likesCount={drop.likesCount}
+          dislikesCount={drop.dislikesCount}
         />
         <CommentButton dropId={drop.id} />
       </div>

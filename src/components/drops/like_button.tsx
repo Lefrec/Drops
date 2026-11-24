@@ -1,44 +1,103 @@
 'use client'
 
 import { useActionState, useEffect, useOptimistic, useState } from "react";
-import { toggleLike } from "@/app/drops/actions";
+import { toggleDislike, toggleLike } from "@/app/drops/actions";
 import { Button } from "@/components/ui/button"
 import { useRealtimeEvent } from "@/hooks/user-realtime-event";
 import type { ActionState } from "@/lib/api/types"
 
-export function LikeButton({dropId, liked, likesCount}: {dropId: number, liked: boolean, likesCount: number}) {
-    const [serverLike, setServerLike] = useState({ liked, likesCount})
+export function LikeButton({
+    dropId,
+    liked,
+    disliked,
+    likesCount,
+    dislikesCount,
+}: {
+    dropId: number
+    liked: boolean
+    disliked: boolean
+    likesCount: number
+    dislikesCount: number
+}) {
+    const [serverLike, setServerLike] = useState({ liked, disliked, likesCount, dislikesCount })
 
     useEffect(() => {
-        setServerLike({ liked, likesCount })
-    }, [liked, likesCount])
+        setServerLike({ liked, disliked, likesCount, dislikesCount })
+    }, [liked, disliked, likesCount, dislikesCount])
 
-    useRealtimeEvent<{ dropId: number; likesCount: number }>('like:updated', (data) => {
+    useRealtimeEvent<{ dropId: number; likesCount: number; dislikesCount: number }>('like:updated', (data) => {
         if (data.dropId !== dropId) return
-        setServerLike((current) => ({...current, likesCount: data.likesCount}))
+        setServerLike((current) => ({
+            ...current,
+            likesCount: data.likesCount,
+            dislikesCount: data.dislikesCount,
+        }))
     })
 
     const [optimisticLike, setOptimisticLike] = useOptimistic(serverLike)
 
-    const [state, action, pending] = useActionState<ActionState, FormData>(async () => {
+    const [likeState, likeAction, likePending] = useActionState<ActionState, FormData>(async () => {
         const nextLiked = !serverLike.liked
         setOptimisticLike({
+            ...serverLike,
             liked: nextLiked,
+            disliked: nextLiked ? false : serverLike.disliked,
             likesCount: serverLike.likesCount + (nextLiked ? 1 : -1),
+            dislikesCount: nextLiked && serverLike.disliked
+                ? serverLike.dislikesCount - 1
+                : serverLike.dislikesCount,
         })
         const result = await toggleLike(dropId, serverLike.liked)
         if (!result.error) {
-            setServerLike((current) => ({...current, liked: nextLiked}))
+            setServerLike((current) => ({
+                ...current,
+                liked: nextLiked,
+                disliked: nextLiked ? false : current.disliked,
+                likesCount: current.likesCount + (nextLiked ? 1 : -1),
+                dislikesCount: nextLiked && current.disliked ? current.dislikesCount - 1 : current.dislikesCount,
+            }))
+        }
+        return result
+    }, {})
+
+    const [dislikeState, dislikeAction, dislikePending] = useActionState<ActionState, FormData>(async () => {
+        const nextDisliked = !serverLike.disliked
+        setOptimisticLike({
+            ...serverLike,
+            disliked: nextDisliked,
+            liked: nextDisliked ? false : serverLike.liked,
+            dislikesCount: serverLike.dislikesCount + (nextDisliked ? 1 : -1),
+            likesCount: nextDisliked && serverLike.liked
+                ? serverLike.likesCount - 1
+                : serverLike.likesCount,
+        })
+        const result = await toggleDislike(dropId, serverLike.disliked)
+        if (!result.error) {
+            setServerLike((current) => ({
+                ...current,
+                disliked: nextDisliked,
+                liked: nextDisliked ? false : current.liked,
+                dislikesCount: current.dislikesCount + (nextDisliked ? 1 : -1),
+                likesCount: nextDisliked && current.liked ? current.likesCount - 1 : current.likesCount,
+            }))
         }
         return result
     }, {})
 
     return (
-        <form action={action} className="w-fit! max-w-none! flex-row! items-center gap-2">
-            <Button type="submit" variant="outline" disabled={pending} aria-pressed={optimisticLike.liked}>
-                {optimisticLike.liked ? '♥' : '♡'} {optimisticLike.likesCount}
-            </Button>
-            {state.error && <p role="alert">{state.error}</p>}
-        </form>
+        <div className="flex items-center gap-2">
+            <form action={likeAction} className="w-fit! max-w-none! flex-row! items-center">
+                <Button type="submit" variant="outline" disabled={likePending} aria-pressed={optimisticLike.liked}>
+                    {optimisticLike.liked ? '♥' : '♡'} {optimisticLike.likesCount}
+                </Button>
+                {likeState.error && <p role="alert">{likeState.error}</p>}
+            </form>
+            <form action={dislikeAction} className="w-fit! max-w-none! flex-row! items-center">
+                <Button type="submit" variant="outline" disabled={dislikePending} aria-pressed={optimisticLike.disliked}>
+                    {optimisticLike.disliked ? '▼' : '▽'} {optimisticLike.dislikesCount}
+                </Button>
+                {dislikeState.error && <p role="alert">{dislikeState.error}</p>}
+            </form>
+        </div>
     )
 }

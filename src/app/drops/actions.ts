@@ -4,6 +4,7 @@ import { apiDelete, apiPatch, apiPost, toActionError } from "@/lib/api/client"
 import type { ActionState } from "@/lib/api/types"
 import { getSessionToken } from "@/lib/session"
 import { refresh } from "next/cache"
+import type { CommentPage } from "@/lib/api/types"
 
 const loginRequiredError = "Connectez-vous pour effectuer cette action."
 
@@ -24,7 +25,58 @@ export async function toggleLike(dropId: number, liked: boolean): Promise<Action
     return {}
 }
 
-export async function addComment(dropId: number, formData: FormData): Promise<ActionState> {
+export async function toggleDislike(dropId: number, disliked: boolean): Promise<ActionState> {
+    const token = await getSessionToken()
+    if (!token) return { error: loginRequiredError }
+
+    try {
+        if (disliked) await apiDelete(`/drops/${dropId}/dislike`, token)
+        else await apiPost(`/drops/${dropId}/dislike`, token)
+    } catch (error) {
+        const actionError = toActionError(error)
+        if (actionError) return actionError
+        throw error
+    }
+
+    refresh()
+    return {}
+}
+
+export async function toggleCommentLike(commentId: number, liked: boolean): Promise<ActionState> {
+    const token = await getSessionToken()
+    if (!token) return { error: loginRequiredError }
+
+    try {
+        if (liked) await apiDelete(`/comments/${commentId}/like`, token)
+        else await apiPost(`/comments/${commentId}/like`, token)
+    } catch (error) {
+        const actionError = toActionError(error)
+        if (actionError) return actionError
+        throw error
+    }
+
+    refresh()
+    return {}
+}
+
+export async function toggleCommentDislike(commentId: number, disliked: boolean): Promise<ActionState> {
+    const token = await getSessionToken()
+    if (!token) return { error: loginRequiredError }
+
+    try {
+        if (disliked) await apiDelete(`/comments/${commentId}/dislike`, token)
+        else await apiPost(`/comments/${commentId}/dislike`, token)
+    } catch (error) {
+        const actionError = toActionError(error)
+        if (actionError) return actionError
+        throw error
+    }
+
+    refresh()
+    return {}
+}
+
+export async function addComment(dropId: number, formData: FormData, parentId?: number): Promise<ActionState> {
     const token = await getSessionToken()
     if (!token) return { error: loginRequiredError }
 
@@ -36,8 +88,15 @@ export async function addComment(dropId: number, formData: FormData): Promise<Ac
         }
     }
 
+    if (parentId !== undefined && (!Number.isSafeInteger(parentId) || parentId < 1)) {
+        return { error: "Le commentaire auquel répondre est invalide.", fields: { parentId: ["Identifiant invalide."] } }
+    }
+
     try {
-        await apiPost(`/drops/${dropId}/comments`, token, { content: content.trim() })
+        await apiPost(`/drops/${dropId}/comments`, token, {
+            content: content.trim(),
+            ...(parentId !== undefined ? { parentId } : {}),
+        })
     } catch (error) {
         const actionError = toActionError(error)
         if (actionError) return actionError
@@ -46,6 +105,23 @@ export async function addComment(dropId: number, formData: FormData): Promise<Ac
 
     refresh()
     return { success: true }
+}
+
+export async function getCommentReplies(commentId: number): Promise<{ page?: CommentPage } & ActionState> {
+    const token = await getSessionToken()
+    if (!token) return { error: loginRequiredError }
+    if (!Number.isSafeInteger(commentId) || commentId < 1) {
+        return { error: "L’identifiant du commentaire est invalide." }
+    }
+
+    try {
+        const page = await apiGet<CommentPage>(`/comments/${commentId}/replies?pageSize=50`, token)
+        return { page }
+    } catch (error) {
+        const actionError = toActionError(error)
+        if (actionError) return actionError
+        throw error
+    }
 }
 
 export async function deleteComment(commentId: number): Promise<ActionState> {

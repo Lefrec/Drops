@@ -52,6 +52,14 @@ export function LiveDropList({
     setDrops((current) => current.filter((drop) => drop.id !== dropId))
   })
 
+  useRealtimeEvent<{ dropId: number; likesCount: number; dislikesCount: number }>("like:updated", (data) => {
+    setDrops((current) => current.map((drop) =>
+      drop.id === data.dropId
+        ? { ...drop, likesCount: data.likesCount, dislikesCount: data.dislikesCount }
+        : drop
+    ))
+  })
+
   if (drops.length === 0) {
     return <p>Aucun drop trouvé.</p>
   }
