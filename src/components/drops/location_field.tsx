@@ -1,24 +1,53 @@
 'use client'
 
 import { useGeolocation } from "@/lib/use_geoloc"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { LocationMap } from "@/components/map/location_map"
 
 export function LocationField({ errors = {} }: { errors?: Record<string, string[]> }) {
     const { status, coords, locate } = useGeolocation()
     const [lat, setLat] = useState("47.49561")
     const [lng, setLng] = useState("6.80544")
+    const [location, setLocation] = useState({ lat: 47.49561, lng: 6.80544 })
+
+    const selectLocation = useCallback((nextLocation: { lat: number; lng: number }) => {
+        setLocation(nextLocation)
+        setLat(nextLocation.lat.toFixed(6))
+        setLng(nextLocation.lng.toFixed(6))
+    }, [])
+
+    function updateCoordinate(axis: "lat" | "lng", value: string) {
+        if (axis === "lat") setLat(value)
+        else setLng(value)
+
+        if (!value.trim()) return
+        const coordinate = Number(value)
+        const limit = axis === "lat" ? 90 : 180
+        if (!Number.isFinite(coordinate) || Math.abs(coordinate) > limit) return
+
+        setLocation((current) => ({ ...current, [axis]: coordinate }))
+    }
 
     useEffect(() => {
         if (coords) {
-            setLat(coords.lat.toFixed(6))
-            setLng(coords.lng.toFixed(6))
+            selectLocation(coords)
         }
-    }, [coords])
+    }, [coords, selectLocation])
 
     return (
         <FieldGroup>
+            <Field>
+                <FieldLabel>Emplacement</FieldLabel>
+                <LocationMap
+                    location={location}
+                    interactive
+                    onLocationChange={selectLocation}
+                    className="h-64 w-full overflow-hidden rounded-md border border-border"
+                />
+                <FieldDescription>Cliquez sur la carte pour placer le drop.</FieldDescription>
+            </Field>
             <Field>
                 <FieldLabel htmlFor="drop-latitude">Latitude</FieldLabel>
                 <input
@@ -27,7 +56,7 @@ export function LocationField({ errors = {} }: { errors?: Record<string, string[
                     type="number"
                     step="any"
                     value={lat}
-                    onChange={(e) => setLat(e.target.value)}
+                    onChange={(e) => updateCoordinate("lat", e.target.value)}
                     required
                     aria-invalid={Boolean(errors.lat || errors.location)}
                 />
@@ -41,7 +70,7 @@ export function LocationField({ errors = {} }: { errors?: Record<string, string[
                     type="number"
                     step="any"
                     value={lng}
-                    onChange={(e) => setLng(e.target.value)}
+                    onChange={(e) => updateCoordinate("lng", e.target.value)}
                     required
                     aria-invalid={Boolean(errors.lng || errors.location)}
                 />
