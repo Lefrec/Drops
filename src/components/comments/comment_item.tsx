@@ -1,5 +1,6 @@
 import type { Comment } from "@/lib/api/types"
 import { UserAvatar } from "@/components/users/user_avatar"
+import { DeleteCommentButton } from "@/components/comments/delete_comment_button"
 import Link from "next/link"
 
 export function CommentItem({ comment }: { comment: Comment }) {
@@ -29,6 +30,7 @@ export function CommentItem({ comment }: { comment: Comment }) {
             @{comment.author.username}
           </Link>
           <p className="mt-2 whitespace-pre-wrap break-words">{comment.content}</p>
+          {comment.isMine && <DeleteCommentButton commentId={comment.id} />}
         </div>
       </div>
     </li>
