@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import type { Category, CommentPage, Drop } from "@/lib/api/types"
 import { getSessionToken } from "@/lib/session"
 import { LoginRequired } from "@/components/auth/login_required"
-import { CommentItem } from "@/components/comments/comment_item"
+import { LiveCommentList } from "@/components/comments/live_comment_list"
 import { CommentButton } from "@/components/comments/comment_button"
 import { LikeButton } from "@/components/drops/like_button"
 import { DeleteDropButton } from "@/components/drops/delete_drop_button"
@@ -123,26 +123,11 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
         <CommentButton dropId={drop.id} />
       </div>
 
-      <section className="flex flex-col gap-4" aria-labelledby="comments-heading">
-        <div className="flex items-center justify-between border-b border-border pb-3">
-          <h2 id="comments-heading">Commentaires</h2>
-          <p className="text-sm text-muted-foreground">{comments.total}</p>
-        </div>
-        {comments.items.length === 0 ? (
-          <p className="text-muted-foreground">Pas encore de commentaires.</p>
-        ) : (
-          <ul>
-            {comments.items.map((comment) => (
-              <CommentItem key={comment.id} comment={comment} />
-            ))}
-          </ul>
-        )}
-        {comments.total > comments.items.length && (
-          <p className="text-sm text-muted-foreground">
-            Affichage des {comments.items.length} premiers commentaires sur {comments.total}.
-          </p>
-        )}
-      </section>
+      <LiveCommentList
+        dropId={drop.id}
+        initialComments={comments.items}
+        initialTotal={comments.total}
+      />
     </article>
   )
 }
