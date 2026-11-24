@@ -6,17 +6,19 @@ import { DropCard } from "@/components/drops/drop_card"
 import { useRealtimeEvent } from "@/hooks/user-realtime-event"
 import type { Drop } from "@/lib/api/types"
 
+interface Props {
+  initialDrops: Drop[]
+  pageSize: number
+  query: string
+  category?: string
+}
+
 export function LiveDropList({
   initialDrops,
   pageSize,
   query,
   category,
-}: {
-  initialDrops: Drop[]
-  pageSize: number
-  query: string
-  category?: string
-}) {
+}: Props) {
   const [drops, setDrops] = useState(initialDrops)
   const router = useRouter()
   const initialStateKey = JSON.stringify({ initialDrops, pageSize, query, category })

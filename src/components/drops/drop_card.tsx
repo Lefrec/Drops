@@ -12,7 +12,7 @@ import { UserAvatar } from "@/components/users/user_avatar"
 
 export function DropCard({ drop }: { drop: Drop }) {
   return (
-    <article className="flex flex-col gap-3">
+    <article id={`drop-${drop.id}`} className="flex flex-col gap-3">
       <Link className="block" href={`/drops/${drop.id}`}>
         <Card>
           
