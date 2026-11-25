@@ -10,19 +10,18 @@ import { UserDrops } from "./user_drops"
 
 interface Props {
   params: Promise<{ username: string }>
-  searchParams: Promise<{ page?: string }>
 }
 
-export default function UserProfilePage({ params, searchParams }: Props) {
+export default function UserProfilePage({ params }: Props) {
   return (
     <Suspense fallback={<main><p>Chargement du profil...</p></main>}>
-      <UserProfileContent params={params} searchParams={searchParams} />
+      <UserProfileContent params={params}/>
     </Suspense>
   )
 }
 
-async function UserProfileContent({ params, searchParams }: Props) {
-  const [{ username }, query] = await Promise.all([params, searchParams])
+async function UserProfileContent({ params }: Props) {
+  const { username } = await params
   const token = await getSessionToken()
 
   if (!token) {
@@ -53,7 +52,7 @@ async function UserProfileContent({ params, searchParams }: Props) {
                 />
               </Link>
               <div className="min-w-0">
-                <h1 className="break-words">{profile.displayName}</h1>
+                <h1 className="wrap-break-words">{profile.displayName}</h1>
                 <Link
                   className="text-sm text-muted-foreground underline-offset-4 hover:underline"
                   href={`/users/${encodeURIComponent(profile.username)}`}
@@ -66,7 +65,7 @@ async function UserProfileContent({ params, searchParams }: Props) {
           </header>
 
           {profile.bio && (
-            <p className="whitespace-pre-wrap break-words">{profile.bio}</p>
+            <p className="whitespace-pre-wrap wrap-break-words">{profile.bio}</p>
           )}
 
           <dl className="grid grid-cols-2 gap-4 border-y border-border py-4 sm:grid-cols-4">
