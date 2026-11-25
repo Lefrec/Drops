@@ -1,13 +1,12 @@
-import { ApiError, apiGet } from "@/lib/api/client"
+import { apiGet } from "@/lib/api/client"
 import type { DropPage, PrivateUser, Profile } from "@/lib/api/types"
 import { getSessionToken } from "@/lib/session"
 import { UserAvatar } from "@/components/users/user_avatar"
 import { ProfileEditForm } from "@/components/users/profile_edit_form"
-import { DropCard } from "@/components/drops/drop_card"
 import { LoginRequired } from "@/components/auth/login_required"
-import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Suspense } from "react"
+import { UserDrops } from "./user_drops"
 
 interface Props {
   params: Promise<{ username: string }>
@@ -32,13 +31,11 @@ async function UserProfileContent({ params, searchParams }: Props) {
 
   const self = await apiGet<PrivateUser>("/auth/me", token)
 
+  const profile = await apiGet<Profile>(`/users/${encodeURIComponent(username)}`, token)
+  const isSelf = self.username === profile.username
 
-  try {
-    const profile = await apiGet<Profile>(`/users/${encodeURIComponent(username)}`, token)
-    const isSelf = self.username === profile.username
-
-    const drops = await apiGet<DropPage>(`/drops?author=${username}`, token)
-    console.log(drops)
+  const drops = await apiGet<DropPage>(`/drops?author=${username}`, token)
+  console.log(drops)
 
     return (
       <main>
@@ -95,18 +92,8 @@ async function UserProfileContent({ params, searchParams }: Props) {
         </section>
         <section>
           <h2>Drops de {username}</h2>
-          <ul className="w-full">
-          {drops.items.map((drop) => (
-            <li className="w-full min-w-0 p-2" key={drop.id}>
-              <DropCard drop={drop} />
-            </li>
-          ))}
-          </ul>
+          <UserDrops drops={drops}/>
         </section>
       </main>
     )
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 404) notFound()
-    throw error
-  }
 }
