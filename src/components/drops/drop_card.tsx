@@ -12,9 +12,9 @@ import { UserAvatar } from "@/components/users/user_avatar"
 
 export function DropCard({ drop }: { drop: Drop }) {
   return (
-    <article id={`drop-${drop.id}`} className="flex flex-col gap-3 m-2 hover:outline-1">
-      <Link className="block" href={`/drops/${drop.id}`}>     
-        <Card>
+    <article id={`drop-${drop.id}`} className="flex w-full min-w-0 flex-col gap-3 hover:outline-1">
+      <Link className="block w-full min-w-0" href={`/drops/${drop.id}`}>
+        <Card className="w-full min-w-0">
           <CardHeader>
         <UserAvatar
           displayName={drop.author.displayName}

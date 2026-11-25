@@ -65,9 +65,9 @@ export function LiveDropList({
   }
 
   return (
-    <ul>
+    <ul className="w-full">
       {drops.map((drop) => (
-        <li key={drop.id} onMouseEnter={() => setActive(drop.id)} onFocus={() => setActive(drop.id)}>
+        <li className="w-full min-w-0 p-2" key={drop.id} onMouseEnter={() => setActive(drop.id)} onFocus={() => setActive(drop.id)}>
           <DropCard drop={drop} />
         </li>
       ))}

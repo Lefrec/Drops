@@ -21,7 +21,7 @@ export function DropsExplorer({ drops, query, category }: Props) {
 
     return (
         <div className="grid grid-cols-1 gap-4 md:h-[70dvh] md:min-h-96 md:grid-cols-2">
-            <div className="col-span-1 md:min-h-0 md:overflow-y-auto md:overscroll-contain md:pr-1">
+            <div className="col-span-1 min-w-0 md:min-h-0 md:overflow-y-auto md:overscroll-contain md:pr-1">
             <Suspense fallback={<p>Chargement des Drops</p>}>
                 <DropList drops={drops} query={query} category={category} setActive={setActiveId}/>
             </Suspense>
