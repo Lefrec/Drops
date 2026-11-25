@@ -2,8 +2,8 @@
 
 import { DropPage } from "@/lib/api/types";
 import { Suspense, useState } from "react";
-import { DropList } from "./drop_list";
 import { DropsMap } from "../map/drops_map";
+import { LiveDropList } from "./live_drop_list";
 
 interface Props {
     drops: DropPage
@@ -23,7 +23,7 @@ export function DropsExplorer({ drops, query, category }: Props) {
         <div className="grid grid-cols-1 gap-4 md:h-[70dvh] md:min-h-96 md:grid-cols-2">
             <div className="col-span-1 min-w-0 md:min-h-0 md:overflow-y-auto md:overscroll-contain md:pr-1">
             <Suspense fallback={<p>Chargement des Drops</p>}>
-                <DropList drops={drops} query={query} category={category} setActive={setActiveId}/>
+                <LiveDropList initialDrops={drops.items} query={query} category={category} setActive={setActiveId} pageSize={drops.pageSize}/>
             </Suspense>
             </div>
             <div className="col-span-1 h-[55dvh] min-h-80 overflow-hidden border border-border md:sticky md:top-4 md:h-full md:min-h-0">
