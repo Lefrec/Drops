@@ -46,7 +46,7 @@ export function AccountMenu({ user }: { user: PrivateUser }) {
           <DropdownMenuSeparator />
           <DropdownMenuItem
             nativeButton={false}
-            render={<Link href="/users/me" />}
+            render={<Link href={`/users/${user.username}`} />}
           >
             Mon profil
           </DropdownMenuItem>

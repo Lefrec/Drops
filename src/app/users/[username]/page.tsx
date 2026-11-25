@@ -9,13 +9,12 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Suspense } from "react"
 
-export default function UserProfilePage({
-  params,
-  searchParams,
-}: {
+interface Props {
   params: Promise<{ username: string }>
   searchParams: Promise<{ page?: string }>
-}) {
+}
+
+export default function UserProfilePage({ params, searchParams }: Props) {
   return (
     <Suspense fallback={<main><p>Chargement du profil...</p></main>}>
       <UserProfileContent params={params} searchParams={searchParams} />
@@ -23,41 +22,20 @@ export default function UserProfilePage({
   )
 }
 
-async function UserProfileContent({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ username: string }>
-  searchParams: Promise<{ page?: string }>
-}) {
+async function UserProfileContent({ params, searchParams }: Props) {
   const [{ username }, query] = await Promise.all([params, searchParams])
   const token = await getSessionToken()
 
-  if (username === "me" && !token) {
-    return <LoginRequired action="consulter votre profil" />
+  if (!token) {
+    return <LoginRequired action="consulter un profil" />
   }
 
-  const requestedPage = Number(query.page)
-  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0
-    ? requestedPage
-    : 1
-  const currentUserPromise = token
-    ? apiGet<PrivateUser>("/auth/me", token)
-    : Promise.resolve(null)
-  const profileNamePromise = username === "me"
-    ? currentUserPromise.then((user) => {
-        if (!user) throw new Error("Un utilisateur connecté est requis pour consulter son profil.")
-        return user.username
-      })
-    : Promise.resolve(username)
+  const self = await apiGet<PrivateUser>("/auth/me", token)
+
 
   try {
-    const [currentUser, profileName] = await Promise.all([
-      currentUserPromise,
-      profileNamePromise,
-    ])
-    const profile = await Promise.resolve(apiGet<Profile>(`/users/${encodeURIComponent(profileName)}`, token ?? undefined))
-    const isSelf = currentUser?.username === profile.username
+    const profile = await apiGet<Profile>(`/users/${encodeURIComponent(username)}`, token)
+    const isSelf = self.username === profile.username
 
     return (
       <main>
