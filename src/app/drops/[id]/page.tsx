@@ -9,12 +9,11 @@ import { CommentButton } from "@/components/comments/comment_button"
 import { ReactionButtons } from "@/components/likes/reaction_buttons"
 import { DeleteDropButton } from "@/components/drops/delete_drop_button"
 import { DropEditForm } from "@/components/drops/drop_edit_form"
-import { UserAvatar } from "@/components/users/user_avatar"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import Link from "next/link"
 import { PresenceWidget } from "@/components/drops/presence_widget"
 import { LocationMap } from "@/components/map/location_map"
+import { AuthorInfo } from "@/components/users/author_info"
 
 export default function DropPage({ params }: { params: Promise<{ id: string }> }) {
   return (
@@ -66,32 +65,7 @@ async function DropContent({ params }: { params: Promise<{ id: string }> }) {
             </div>
           )}
         </div>
-        <div className="flex items-center gap-3">
-          <Link
-            href={`/users/${encodeURIComponent(drop.author.username)}`}
-            aria-label={`Voir le profil de ${drop.author.displayName}`}
-          >
-            <UserAvatar
-              displayName={drop.author.displayName}
-              avatarUrl={drop.author.avatarUrl}
-              size="lg"
-            />
-          </Link>
-          <div className="min-w-0">
-            <Link
-              className="block font-medium underline-offset-4 hover:underline"
-              href={`/users/${encodeURIComponent(drop.author.username)}`}
-            >
-              {drop.isMine ? "Vous" : drop.author.displayName}
-            </Link>
-            <Link
-              className="block text-sm text-muted-foreground underline-offset-4 hover:underline"
-              href={`/users/${encodeURIComponent(drop.author.username)}`}
-            >
-              @{drop.author.username}
-            </Link>
-          </div>
-        </div>
+        <AuthorInfo author={drop.author} link={true}/>
       </header>
 
       {drop.imageUrl && (
