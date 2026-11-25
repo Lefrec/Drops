@@ -37,6 +37,9 @@ async function UserProfileContent({ params, searchParams }: Props) {
     const profile = await apiGet<Profile>(`/users/${encodeURIComponent(username)}`, token)
     const isSelf = self.username === profile.username
 
+    const drops = await apiGet<DropPage>(`/drops?author=${username}`, token)
+    console.log(drops)
+
     return (
       <main>
         <section className="flex flex-col gap-6">
@@ -89,6 +92,16 @@ async function UserProfileContent({ params, searchParams }: Props) {
               </dd>
             </div>
           </dl>
+        </section>
+        <section>
+          <h2>Drops de {username}</h2>
+          <ul className="w-full">
+          {drops.items.map((drop) => (
+            <li className="w-full min-w-0 p-2" key={drop.id}>
+              <DropCard drop={drop} />
+            </li>
+          ))}
+          </ul>
         </section>
       </main>
     )
