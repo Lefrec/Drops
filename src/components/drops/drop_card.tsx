@@ -8,7 +8,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { UserAvatar } from "@/components/users/user_avatar"
+
+import { AuthorInfo } from "../users/author_info"
 
 export function DropCard({ drop }: { drop: Drop }) {
   return (
@@ -16,14 +17,7 @@ export function DropCard({ drop }: { drop: Drop }) {
       <Link className="block w-full min-w-0" href={`/drops/${drop.id}`}>
         <Card className="w-full min-w-0">
           <CardHeader>
-        <UserAvatar
-          displayName={drop.author.displayName}
-          avatarUrl={drop.author.avatarUrl}
-        />
-        <span className="flex flex-col">
-          <span className="font-medium">{drop.author.displayName}</span>
-          <span className="text-sm text-muted-foreground">@{drop.author.username}</span>
-        </span>
+            <AuthorInfo author={drop.author} link={false}/>
             <CardTitle>{drop.title}</CardTitle>
             <CardDescription>{drop.category}</CardDescription>
           </CardHeader>

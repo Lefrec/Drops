@@ -1,63 +1,40 @@
-import { ApiError, apiGet } from "@/lib/api/client"
+import { apiGet } from "@/lib/api/client"
 import type { DropPage, PrivateUser, Profile } from "@/lib/api/types"
 import { getSessionToken } from "@/lib/session"
 import { UserAvatar } from "@/components/users/user_avatar"
 import { ProfileEditForm } from "@/components/users/profile_edit_form"
-import { DropCard } from "@/components/drops/drop_card"
 import { LoginRequired } from "@/components/auth/login_required"
-import { notFound } from "next/navigation"
 import Link from "next/link"
 import { Suspense } from "react"
+import { UserDrops } from "./user_drops"
 
-export default function UserProfilePage({
-  params,
-  searchParams,
-}: {
+interface Props {
   params: Promise<{ username: string }>
-  searchParams: Promise<{ page?: string }>
-}) {
+}
+
+export default function UserProfilePage({ params }: Props) {
   return (
     <Suspense fallback={<main><p>Chargement du profil...</p></main>}>
-      <UserProfileContent params={params} searchParams={searchParams} />
+      <UserProfileContent params={params}/>
     </Suspense>
   )
 }
 
-async function UserProfileContent({
-  params,
-  searchParams,
-}: {
-  params: Promise<{ username: string }>
-  searchParams: Promise<{ page?: string }>
-}) {
-  const [{ username }, query] = await Promise.all([params, searchParams])
+async function UserProfileContent({ params }: Props) {
+  const { username } = await params
   const token = await getSessionToken()
 
-  if (username === "me" && !token) {
-    return <LoginRequired action="consulter votre profil" />
+  if (!token) {
+    return <LoginRequired action="consulter un profil" />
   }
 
-  const requestedPage = Number(query.page)
-  const page = Number.isSafeInteger(requestedPage) && requestedPage > 0
-    ? requestedPage
-    : 1
-  const currentUserPromise = token
-    ? apiGet<PrivateUser>("/auth/me", token)
-    : Promise.resolve(null)
-  const profileNamePromise = username === "me"
-    ? currentUserPromise.then((user) => {
-        if (!user) throw new Error("Un utilisateur connecté est requis pour consulter son profil.")
-        return user.username
-      })
-    : Promise.resolve(username)
+  const self = await apiGet<PrivateUser>("/auth/me", token)
 
-  try {
-    const [currentUser, profileName] = await Promise.all([
-      currentUserPromise,
-      profileNamePromise,
-    ])
-    const profile = await Promise.resolve(apiGet<Profile>(`/users/${encodeURIComponent(profileName)}`, token ?? undefined))
-    const isSelf = currentUser?.username === profile.username
+  const profile = await apiGet<Profile>(`/users/${encodeURIComponent(username)}`, token)
+  const isSelf = self.username === profile.username
+
+  const drops = await apiGet<DropPage>(`/drops?author=${username}`, token)
+  console.log(drops)
 
     return (
       <main>
@@ -75,7 +52,7 @@ async function UserProfileContent({
                 />
               </Link>
               <div className="min-w-0">
-                <h1 className="break-words">{profile.displayName}</h1>
+                <h1 className="wrap-break-words">{profile.displayName}</h1>
                 <Link
                   className="text-sm text-muted-foreground underline-offset-4 hover:underline"
                   href={`/users/${encodeURIComponent(profile.username)}`}
@@ -88,7 +65,7 @@ async function UserProfileContent({
           </header>
 
           {profile.bio && (
-            <p className="whitespace-pre-wrap break-words">{profile.bio}</p>
+            <p className="whitespace-pre-wrap wrap-break-words">{profile.bio}</p>
           )}
 
           <dl className="grid grid-cols-2 gap-4 border-y border-border py-4 sm:grid-cols-4">
@@ -112,10 +89,10 @@ async function UserProfileContent({
             </div>
           </dl>
         </section>
+        <section>
+          <h2>Drops de {username}</h2>
+          <UserDrops drops={drops}/>
+        </section>
       </main>
     )
-  } catch (error) {
-    if (error instanceof ApiError && error.status === 404) notFound()
-    throw error
-  }
 }

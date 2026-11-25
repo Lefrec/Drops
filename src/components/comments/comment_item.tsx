@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dialog"
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import Link from "next/link"
+import { AuthorInfo } from "../users/author_info"
 
 interface Props {
   comment: Comment
@@ -104,33 +105,8 @@ export function CommentItem({ comment, isReply = false }: Props) {
 
   return (
     <li className="min-w-0 border-b border-border py-4 last:border-b-0">
-      <div className="flex items-start gap-3">
-        <Link
-          href={localComment.deleted ? "#" : `/users/${encodeURIComponent(localComment.author.username)}`}
-          aria-label={`Voir le profil de ${localComment.author.displayName}`}
-          onClick={(event) => localComment.deleted && event.preventDefault()}
-        >
-          <UserAvatar
-            displayName={localComment.author.displayName}
-            avatarUrl={localComment.author.avatarUrl}
-          />
-        </Link>
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <Link
-            className="font-medium underline-offset-4 hover:underline"
-            href={localComment.deleted ? "#" : `/users/${encodeURIComponent(localComment.author.username)}`}
-            onClick={(event) => localComment.deleted && event.preventDefault()}
-          >
-            {localComment.deleted ? "Commentaire supprimé" : localComment.isMine ? "Vous" : localComment.author.displayName}
-          </Link>
-          {!localComment.deleted && (
-            <Link
-              className="text-sm text-muted-foreground underline-offset-4 hover:underline"
-              href={`/users/${encodeURIComponent(localComment.author.username)}`}
-            >
-              @{localComment.author.username}
-            </Link>
-          )}
+      <div className="flex flex-col items-start gap-3">
+        <AuthorInfo author={localComment.author} link={localComment.deleted ? false : true}/>
           <p className="mt-2 whitespace-pre-wrap break-words">
             {localComment.deleted ? "" : localComment.content}
           </p>
@@ -205,7 +181,6 @@ export function CommentItem({ comment, isReply = false }: Props) {
             </div>
           )}
         </div>
-      </div>
     </li>
   )
 }
